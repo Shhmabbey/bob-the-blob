@@ -71,7 +71,7 @@ Future Features
 
 ## Did you enjoy this game?
 <details>
-<summary><b>Conside Donationg to this Cause</b></summary>
+<summary><b>Conside Donating to this Cause</b></summary>
 If so, please consider making a dollar donation to fund the treatment of AIDS to community members in San Francisco and Los Angeles.
 
 [Donate Here](https://actnow.tofighthiv.org/site/TR/Events/AIDSLifeCycleCenter?px=3619736&pg=personal&fr_id=2381)
