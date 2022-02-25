@@ -5,7 +5,7 @@ You are a cute little bug with a passion for coffee! Jump from tree branch to tr
 <br></br>
 
 ## Directions
-Use the space key to jump and the left and right arrow keys to move in either direction. Increase your score by collecting coffee cups and traveling higher. Watch out for birds! Hop on top of birds to knock them down and gain additional points.
+Use the *space* key to jump and the *left* and *right* arrow keys to move in either direction. Increase your score by collecting coffee cups and traveling higher. Watch out for birds! Bounce on top of birds to knock them down and gain additional points.
 <br></br>
 
 ## Design Plan
@@ -63,6 +63,7 @@ Future Features
 * Moving predators
 * Other special items
 * Score board
+* Style your bug
 
 
 <br></br>
