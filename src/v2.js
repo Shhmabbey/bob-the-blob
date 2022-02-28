@@ -1,5 +1,13 @@
+const Platform = require('./scripts/platform');
+const Player = require('./scripts/player');
+
 (function () {
-  var display, display_width, display_height, controller, player;
+  var display, displayWidth, displayHeight, controller;
+
+  let playerHeight = 16;
+  let playerWidth = 16;
+  var player = new Player(playerHeight, playerWidth);
+  
 
   let bg = new Image();
   bg.src = "assets/platform/bg4.png"
@@ -26,7 +34,7 @@
     keyUpDown: function (event) {
 
       /* Get the physical state of the key being pressed. true = down false = up*/
-      var key_state = (event.type == "keydown") ? true : false;
+      var keyState = (event.type == "keydown") ? true : false;
 
       switch (event.keyCode) {
 
@@ -38,20 +46,20 @@
           from altering the active state of the key. Basically, when you are jumping,
           holding the jump key down isn't going to work. You'll have to hit it every
           time, but only if you set the active key state to false when you jump. */
-          if (controller.left.state != key_state) controller.left.active = key_state;
-          controller.left.state = key_state;// Always update the physical state.
+          if (controller.left.state != keyState) controller.left.active = keyState;
+          controller.left.state = keyState;// Always update the physical state.
 
           break;
         case 38:// up key
 
-          if (controller.up.state != key_state) controller.up.active = key_state;
-          controller.up.state = key_state;
+          if (controller.up.state != keyState) controller.up.active = keyState;
+          controller.up.state = keyState;
 
           break;
         case 39:// right key
 
-          if (controller.right.state != key_state) controller.right.active = key_state;
-          controller.right.state = key_state;
+          if (controller.right.state != keyState) controller.right.active = keyState;
+          controller.right.state = keyState;
 
           break;
 
@@ -63,28 +71,23 @@
 
   };
 
-  player = {
-    // animation: new Animation(),// You don't need to setup Animation right away.
-    jumping: true,
-    height: 16, width: 16,
-    x: 0, y: 40 - 18,
-    x_velocity: 0, y_velocity: 0
-  };
+  // player = {
+  //   // animation: new Animation(),// Don't need to setup Animation right away.
+  //   jumping: true,
+  //   height: 16, width: 16,
+  //   x: 0, y: 0,
+  //   xVelocity: 0, yVelocity: 0,
 
-  class Platform {
-    constructor(newplatformHeight) {
-      this.x = Math.random() * (display_width - platformWidth);
-      this.y = newplatformHeight;
+  //   right() {
+  //     return this.x + this.width;
+  //   }
+  // };
 
-      this.width = platformWidth;
-      this.height = platformHeight;
-    }
-  }
-
+  // static class method or factory mehtod?
   function generatePlatforms() {
     for (let i = 0; i < maxPlatforms; i++) {
-      let newplatformHeight = 100 + i * (display_height / maxPlatforms);
-      let newplatform = new Platform(newplatformHeight);
+      let newplatformHeight = 100 + i * (displayHeight / maxPlatforms);
+      let newplatform = new Platform(newplatformHeight, displayWidth, platformWidth, platformHeight);
       console.log(display.canvas.width, platformWidth)
       platforms.push(newplatform);
     }
@@ -95,17 +98,11 @@
       platforms.forEach((platform) => {
         platform.y -= 4;
 
-        // let visual = platform.visual;
-        // visual.style.bottom = platform.bottom + 'px';
-
         if (platform.y < 10) {
-          level++; // consider changing to when player passes platform
-
-          // let firstplatform = platforms[0].visual;
-          // firstplatform.classList.remove('platform');
+          level++; 
           platforms.shift();
 
-          let newplatform = new Platform(bgTop);
+          let newplatform = new Platform(bgTop, displayWidth, platformWidth, platformHeight);
           platforms.push(newplatform);
         }
       })
@@ -121,7 +118,7 @@
 
       controller.up.active = false;
       player.jumping = true;
-      player.y_velocity -= 2.5; // initial jump velocity
+      player.yVelocity -= 2.5; // initial jump velocity
 
     }
 
@@ -129,14 +126,14 @@
 
       /* To change the animation, all you have to do is call animation.change. */
       // player.animation.change(sprite_sheet.frame_sets[2], 15);
-      player.x_velocity -= 0.05;
+      player.xVelocity -= 0.05;
 
     }
 
     if (controller.right.active) {
 
       // player.animation.change(sprite_sheet.frame_sets[1], 15);
-      player.x_velocity += 0.05;
+      player.xVelocity += 0.05;
 
     }
 
@@ -147,32 +144,34 @@
 
     // }
 
-    player.y_velocity += 0.25; // gravity
+    player.yVelocity += 0.25; // gravity
 
     // position is only updated from velocity
-    player.x += player.x_velocity;
-    player.y += player.y_velocity;
-    player.x_velocity *= 0.9; // dampening factor, nec?
-    player.y_velocity *= 0.9;
+    player.x += player.xVelocity;
+    player.y += player.yVelocity;
+    player.xVelocity *= 0.9; // dampening factor, nec?
+    player.yVelocity *= 0.9;
 
     // check collision function
     platforms.forEach(platform => {
-      
-      if (player.y + player.height > platform.y - 2) {
+      if (
+        (player.y > platform.bottom()) &&
+        (player.y < platform.top()) && 
+        (player.right() > platform.left()) &&
+        (player.x < (platform.right())) &&
+        (!jumping)
+        ) {
         player.jumping = false;
         player.y = platform.y - 2 - player.height;
-        player.y_velocity = 0;
-      }
-    });
+        player.yVelocity = 0;
+        }
+      });
+
 
     if (player.x + player.width < 0) {  // left wrap
-
       player.x = display.canvas.width;
-
     } else if (player.x > display.canvas.width) {  // right wrap
-
       player.x = - player.width;
-
     }
 
     // player.animation.update();
@@ -185,8 +184,10 @@
 
   function createplayer() {
     // set positions, center player, set player on top of platform
-    player.x = platforms[maxPlatforms-1].x + ((platformWidth - player.width) / 2);
-    player.y = platforms[maxPlatforms - 1].y + platformHeight;
+    player.x = platforms[maxPlatforms - 1].x + ((platformWidth - player.width) / 2);
+    // console.log(platforms[maxPlatforms - 1].top)
+    // player.y = platforms[maxPlatforms - 1].y - ((platforms[maxPlatforms - 1].height) * 2);
+    player.y = platforms[maxPlatforms - 1].top();
     console.log(player)
   }
 
@@ -194,12 +195,12 @@
     // if (display.canvas.height > document.documentElement.clientHeight) {
     //   display.canvas.height = document.documentElement.clientHeight;
     // }
-    display_height = document.documentElement.clientHeight;
-    let aspect_ratio = bg.width / bg.height;
-    display_width = display_height * aspect_ratio;
+    displayHeight = document.documentElement.clientHeight;
+    let aspectRatio = bg.width / bg.height;
+    displayWidth = displayHeight * aspectRatio;
 
-    display.canvas.height = display_height;
-    display.canvas.width = display_width;
+    display.canvas.height = displayHeight;
+    display.canvas.width = displayWidth;
 
     // display.canvas.width = document.documentElement.clientWidth - 32;
     // if (display.canvas.width > document.documentElement.clientHeight) {
@@ -210,12 +211,13 @@
   };
 
   function render() {
-    display.fillStyle = "#7ec0ff";
+    
     // buffer.strokeStyle = "#8ed0ff";
     // buffer.lineWidth = 10;
     // buffer.drawImage(sprite, player.x, player.y, player.width, player.height);
     display.canvas.width = bg.width;
     display.canvas.height = bg.height;
+
     display.drawImage(
       bg,
       0,
@@ -224,15 +226,19 @@
       bg.height,
       0,
       0,
-      display_width,
-      display_height
+      displayWidth,
+      displayHeight
     );
+
+    display.fillStyle = "#7ec0ff";
     platforms.forEach((platform) => {
       // console.log(platform.x, platform.y, platform.width, platform.height);
       display.fillRect(platform.x, platform.y, platform.width, platform.height);
     });
+
     display.drawImage(sprite, player.x, player.y);
     console.log(player);
+
   }
 
   // display = document.querySelector("canvas").getContext("2d");
