@@ -26,6 +26,10 @@ class Player {
   bottom() {
     return this.y + this.height;
   }
+
+  isFalling() {
+    return this.yVelocity >= 0;
+  }
 }
 
 module.exports = Player;

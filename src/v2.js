@@ -1,8 +1,11 @@
 const Platform = require('./scripts/platform');
 const Player = require('./scripts/player');
+const DISPLAY_WRAP = false;
 
 (function () {
-  var display, displayWidth, displayHeight, controller;
+  var displayWidth, displayHeight, controller;
+
+  var display = document.querySelector("canvas").getContext("2d");
 
   let playerHeight = 16;
   let playerWidth = 16;
@@ -19,27 +22,18 @@ const Player = require('./scripts/player');
   let maxPlatforms = 7;
   let platforms = [];
 
-  // buffer = document.createElement("canvas").getContext("2d");
-  display = document.querySelector("canvas").getContext("2d");
-
   controller = {
-
-    /* Now each key object knows its physical state as well as its active state.
-    When a key is active it is used in the game logic, but its physical state is
-    always recorded and never altered for reference. */
+    // physical state of key, key being pressed. true = down false = up
+    // active is virtual state
     left: { active: false, state: false },
     right: { active: false, state: false },
     up: { active: false, state: false },
 
     keyUpDown: function (event) {
-
-      /* Get the physical state of the key being pressed. true = down false = up*/
       var keyState = (event.type == "keydown") ? true : false;
 
       switch (event.keyCode) {
-
         case 37:// left key
-
           /* If the virtual state of the key is not equal to the physical state
           of the key, we know something has changed, and we must update the active
           state of the key. By doing this it prevents repeat firing of keydown events
@@ -48,47 +42,29 @@ const Player = require('./scripts/player');
           time, but only if you set the active key state to false when you jump. */
           if (controller.left.state != keyState) controller.left.active = keyState;
           controller.left.state = keyState;// Always update the physical state.
-
           break;
         case 38:// up key
-
           if (controller.up.state != keyState) controller.up.active = keyState;
           controller.up.state = keyState;
-
           break;
         case 39:// right key
-
           if (controller.right.state != keyState) controller.right.active = keyState;
           controller.right.state = keyState;
-
           break;
-
+        case 32: // space bar -- DEBUG
+          console.log(player)
       }
 
       //console.log("left:  " + controller.left.state + ", " + controller.left.active + "\nright: " + controller.right.state + ", " + controller.right.active + "\nup:    " + controller.up.state + ", " + controller.up.active);
-
     }
 
-  };
-
-  // player = {
-  //   // animation: new Animation(),// Don't need to setup Animation right away.
-  //   jumping: true,
-  //   height: 16, width: 16,
-  //   x: 0, y: 0,
-  //   xVelocity: 0, yVelocity: 0,
-
-  //   right() {
-  //     return this.x + this.width;
-  //   }
-  // };
+  }
 
   // static class method or factory mehtod?
   function generatePlatforms() {
     for (let i = 0; i < maxPlatforms; i++) {
       let newplatformHeight = 100 + i * (displayHeight / maxPlatforms);
       let newplatform = new Platform(newplatformHeight, displayWidth, platformWidth, platformHeight);
-      console.log(display.canvas.width, platformWidth)
       platforms.push(newplatform);
     }
   }
@@ -99,7 +75,7 @@ const Player = require('./scripts/player');
         platform.y -= 4;
 
         if (platform.y < 10) {
-          level++; 
+          // level++; 
           platforms.shift();
 
           let newplatform = new Platform(bgTop, displayWidth, platformWidth, platformHeight);
@@ -109,115 +85,100 @@ const Player = require('./scripts/player');
     }
   }
 
+  function checkCollision() {
+    platforms.forEach(platform => {
+      if (
+        player.isFalling() &&
+        (player.bottom() > platform.bottom()) &&
+        (player.bottom() < platform.top()) &&
+        (player.right() > platform.left()) &&
+        (player.left() < platform.right()) // &&
+        // (!player.jumping)
+      ) {
+        player.jumping = false;
+        player.y = platform.top;
+        player.yVelocity = 0;
+      } else {
+        // gravity?
+      }
+    })
+  }
 
-  function mainLoop() {
-
-    movePlatforms();
-
+  function updatePlayerVelocity() {
     if (controller.up.active && !player.jumping) {
-
       controller.up.active = false;
       player.jumping = true;
       player.yVelocity -= 2.5; // initial jump velocity
-
     }
-
     if (controller.left.active) {
-
-      /* To change the animation, all you have to do is call animation.change. */
+      /* To change the animation, call animation.change. */
       // player.animation.change(sprite_sheet.frame_sets[2], 15);
       player.xVelocity -= 0.05;
-
     }
-
     if (controller.right.active) {
-
       // player.animation.change(sprite_sheet.frame_sets[1], 15);
       player.xVelocity += 0.05;
-
     }
-
     /* If you're just standing still, change the animation to standing still. */
     // if (!controller.left.active && !controller.right.active) {
-
     //   player.animation.change(sprite_sheet.frame_sets[0], 20);
-
     // }
-
     player.yVelocity += 0.25; // gravity
+    player.xVelocity *= 0.9; // dampening factor
+    player.yVelocity *= 0.9;
+  }
 
+  function handlePlayerDisplayEdgeBehavior() {
+    if (!DISPLAY_WRAP) {
+      // saturate x position
+      player.x = Math.min(player.x, displayWidth);
+      player.x = Math.max(player.x, 0);
+    }
+    else {
+      // TODO wrap logic
+    }
+  }
+
+  function updatePlayerPosition() {
     // position is only updated from velocity
     player.x += player.xVelocity;
     player.y += player.yVelocity;
-    player.xVelocity *= 0.9; // dampening factor, nec?
-    player.yVelocity *= 0.9;
 
-    // check collision function
-    platforms.forEach(platform => {
-      if (
-        (player.y > platform.bottom()) &&
-        (player.y < platform.top()) && 
-        (player.right() > platform.left()) &&
-        (player.x < (platform.right())) &&
-        (!jumping)
-        ) {
-        player.jumping = false;
-        player.y = platform.y - 2 - player.height;
-        player.yVelocity = 0;
-        }
-      });
+    checkCollision();
+    handlePlayerDisplayEdgeBehavior();
+  }
 
 
-    if (player.x + player.width < 0) {  // left wrap
-      player.x = display.canvas.width;
-    } else if (player.x > display.canvas.width) {  // right wrap
-      player.x = - player.width;
-    }
-
+  function mainLoop() {
+    movePlatforms();
+    updatePlayerVelocity();
+    updatePlayerPosition();
     // player.animation.update();
-
     render();
-
-    // window.requestAnimationFrame(mainLoop);
-
+    window.requestAnimationFrame(mainLoop);
   };
 
-  function createplayer() {
-    // set positions, center player, set player on top of platform
+  function setPlayerInitialPosition() {
     player.x = platforms[maxPlatforms - 1].x + ((platformWidth - player.width) / 2);
-    // console.log(platforms[maxPlatforms - 1].top)
-    // player.y = platforms[maxPlatforms - 1].y - ((platforms[maxPlatforms - 1].height) * 2);
     player.y = platforms[maxPlatforms - 1].top();
     console.log(player)
   }
 
   function resize() {
-    // if (display.canvas.height > document.documentElement.clientHeight) {
-    //   display.canvas.height = document.documentElement.clientHeight;
-    // }
-    displayHeight = document.documentElement.clientHeight;
     let aspectRatio = bg.width / bg.height;
+    
+    displayHeight = (document.documentElement.clientHeight) - 100;
+    
     displayWidth = displayHeight * aspectRatio;
 
     display.canvas.height = displayHeight;
     display.canvas.width = displayWidth;
 
-    // display.canvas.width = document.documentElement.clientWidth - 32;
-    // if (display.canvas.width > document.documentElement.clientHeight) {
-    //   display.canvas.width = document.documentElement.clientHeight;
-    // }
-    // display.canvas.height = display.canvas.width * 0.5;
     display.imageSmoothingEnabled = false;
   };
 
   function render() {
-    
-    // buffer.strokeStyle = "#8ed0ff";
-    // buffer.lineWidth = 10;
-    // buffer.drawImage(sprite, player.x, player.y, player.width, player.height);
-    display.canvas.width = bg.width;
-    display.canvas.height = bg.height;
-
+    resize();
     display.drawImage(
       bg,
       0,
@@ -236,23 +197,23 @@ const Player = require('./scripts/player');
       display.fillRect(platform.x, platform.y, platform.width, platform.height);
     });
 
-    display.drawImage(sprite, player.x, player.y);
+    display.drawImage(sprite, player.x, player.y, player.width, player.height);
     console.log(player);
 
   }
 
-  // display = document.querySelector("canvas").getContext("2d");
   // add listener for click to start game
 
   bg.addEventListener('load', () => {
     resize();
     generatePlatforms();
-    createplayer();
-    console.log(player.y)
+    setPlayerInitialPosition();
+
+    window.addEventListener("resize", resize);
+    window.addEventListener("keydown", controller.keyUpDown);
+    window.addEventListener("keyup", controller.keyUpDown);
     window.requestAnimationFrame(mainLoop);
   })
 
-  window.addEventListener("resize", resize);
-  window.addEventListener("keydown", controller.keyUpDown);
-  window.addEventListener("keyup", controller.keyUpDown);
+
 })();
