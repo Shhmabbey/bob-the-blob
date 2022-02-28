@@ -1,14 +1,15 @@
-const Platform = require('./scripts/platform');
-const Player = require('./scripts/player');
-const DISPLAY_WRAP = false;
-
 (function () {
-  var displayWidth, displayHeight, controller;
+  const Platform = require('./scripts/platform');
+  const Player = require('./scripts/player');
+  
+  const DISPLAY_WRAP = false;
 
-  var display = document.querySelector("canvas").getContext("2d");
+  var displayWidth, displayHeight, controller, playerMaxHeight;
 
-  let playerHeight = 16;
-  let playerWidth = 16;
+  let display = document.querySelector("canvas").getContext("2d");
+
+  let playerHeight = 30; // refactor to ratio
+  let playerWidth = 30; // refactor to ratio
   var player = new Player(playerHeight, playerWidth);
   
 
@@ -17,10 +18,12 @@ const DISPLAY_WRAP = false;
   let sprite = new Image();
   sprite.src = "assets/Sprites/Cloud_Ball_Blue.png"
 
-  let platformWidth = 85;
+  let platformWidth = 145;
   let platformHeight = 15;
-  let maxPlatforms = 7;
+  let maxPlatforms = 6;
   let platforms = [];
+
+  playerMaxHeight = displayHeight * .4;
 
   controller = {
     // physical state of key, key being pressed. true = down false = up
@@ -70,15 +73,15 @@ const DISPLAY_WRAP = false;
   }
 
   function movePlatforms() {
-    if (player.y > bg.height / 3) {
+    if (player.y < (bg.height * .4)) { // ok?
       platforms.forEach((platform) => {
-        platform.y -= 4;
+        platform.y += 15; // ok?
 
-        if (platform.y < 10) {
+        if (platform.y > displayHeight) {
           // level++; 
           platforms.shift();
 
-          let newplatform = new Platform(bgTop, displayWidth, platformWidth, platformHeight);
+          let newplatform = new Platform(0, displayWidth, platformWidth, platformHeight);
           platforms.push(newplatform);
         }
       })
@@ -89,17 +92,18 @@ const DISPLAY_WRAP = false;
     platforms.forEach(platform => {
       if (
         player.isFalling() &&
-        (player.bottom() > platform.bottom()) &&
-        (player.bottom() < platform.top()) &&
+        (player.bottom() < platform.bottom()) &&
+        (player.bottom() > platform.top()) &&
         (player.right() > platform.left()) &&
         (player.left() < platform.right()) // &&
         // (!player.jumping)
       ) {
+        console.log('Landed on', platform)
         player.jumping = false;
-        player.y = platform.top;
         player.yVelocity = 0;
-      } else {
-        // gravity?
+        player.y = platform.top() - playerHeight;
+        player.onPlatform = platform
+        return true
       }
     })
   }
@@ -108,25 +112,40 @@ const DISPLAY_WRAP = false;
     if (controller.up.active && !player.jumping) {
       controller.up.active = false;
       player.jumping = true;
-      player.yVelocity -= 2.5; // initial jump velocity
+      player.onPlatform = -1;
+      player.yVelocity -= 30; // initial jump velocity
     }
     if (controller.left.active) {
       /* To change the animation, call animation.change. */
       // player.animation.change(sprite_sheet.frame_sets[2], 15);
-      player.xVelocity -= 0.05;
+      player.xVelocity -= 0.5;
     }
     if (controller.right.active) {
       // player.animation.change(sprite_sheet.frame_sets[1], 15);
-      player.xVelocity += 0.05;
+      player.xVelocity += 0.5;
     }
     /* If you're just standing still, change the animation to standing still. */
     // if (!controller.left.active && !controller.right.active) {
     //   player.animation.change(sprite_sheet.frame_sets[0], 20);
     // }
-    player.yVelocity += 0.25; // gravity
+    applyGravity();
     player.xVelocity *= 0.9; // dampening factor
     player.yVelocity *= 0.9;
   }
+
+  function applyGravity() {
+    if (player.onPlatform !== -1) {
+      // check if player falls off side of platform => apply gravity
+      let platform = player.onPlatform;
+      if (!((player.right() > platform.left()) && (player.left() < platform.right()))) {
+        player.jumping = true;
+        player.onPlatform = -1;
+      }
+    } else {
+      player.yVelocity += 0.6;
+    }
+  }
+
 
   function handlePlayerDisplayEdgeBehavior() {
     if (!DISPLAY_WRAP) {
@@ -140,9 +159,14 @@ const DISPLAY_WRAP = false;
   }
 
   function updatePlayerPosition() {
-    // position is only updated from velocity
     player.x += player.xVelocity;
     player.y += player.yVelocity;
+
+    if (player.y < playerMaxHeight) {
+      let platformMoveDistance = player.y - playerMaxHeight;
+      player.y = playerMaxHeight;
+      movePlatforms(platformMoveDistance);
+    }
 
     checkCollision();
     handlePlayerDisplayEdgeBehavior();
@@ -160,15 +184,13 @@ const DISPLAY_WRAP = false;
 
   function setPlayerInitialPosition() {
     player.x = platforms[maxPlatforms - 1].x + ((platformWidth - player.width) / 2);
-    player.y = platforms[maxPlatforms - 1].top();
-    console.log(player)
+    player.y = platforms[maxPlatforms - 1].top() -100;
   }
 
   function resize() {
     let aspectRatio = bg.width / bg.height;
-    
+
     displayHeight = (document.documentElement.clientHeight) - 100;
-    
     displayWidth = displayHeight * aspectRatio;
 
     display.canvas.height = displayHeight;
@@ -193,12 +215,11 @@ const DISPLAY_WRAP = false;
 
     display.fillStyle = "#7ec0ff";
     platforms.forEach((platform) => {
-      // console.log(platform.x, platform.y, platform.width, platform.height);
       display.fillRect(platform.x, platform.y, platform.width, platform.height);
     });
 
     display.drawImage(sprite, player.x, player.y, player.width, player.height);
-    console.log(player);
+
 
   }
 

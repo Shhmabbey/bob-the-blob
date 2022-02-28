@@ -4,6 +4,7 @@ class Player {
     this.height = playerHeight;
     this.width = playerWidth;
 
+    this.onPlatform = -1; // not on platform
     this.x = 0;
     this.y = 0;
 
@@ -29,6 +30,12 @@ class Player {
 
   isFalling() {
     return this.yVelocity >= 0;
+  }
+
+  still_on_platform() {  // todo: think about this
+    if (this.onPlatform !== -1) {
+      return ((player.right() > this.onPlatform.left()) && (player.left() < platform.right()))
+    }
   }
 }
 
