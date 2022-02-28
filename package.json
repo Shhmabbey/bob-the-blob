@@ -3,8 +3,13 @@
   "version": "1.0.0",
   "description": "## Overview You are a cute little bug with a passion for coffee! Jump from tree branch to tree branch. Collect cups of coffee as you travel higher up the tree. Be wary of predators and careful not to fall! <br></br>",
   "main": "app.js",
+  "browserslist": [
+    "defaults"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "webpack --watch --mode=development",
+    "build": "webpack --mode=production"
   },
   "repository": {
     "type": "git",
@@ -29,14 +34,5 @@
     "sass-loader": "^12.6.0",
     "webpack": "^5.69.1",
     "webpack-cli": "^4.9.2"
-  },
-  {
-    "browserslist": [
-      "defaults"
-    ],
-    "scripts": {
-      "watch": "webpack --watch --mode=development",
-      "build": "webpack --mode=production"
-    },
   }
 }

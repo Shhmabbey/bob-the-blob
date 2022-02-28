@@ -1,4 +1,4 @@
-
+// turns ES6 into ES5 code
 {
   "presets": [
     [

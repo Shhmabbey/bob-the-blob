@@ -1,0 +1,58 @@
+@import './styles/reset.scss';
+@import './styles/theme.scss';
+
+//  this overwrites other files
+
+// .grid {
+//   width: 400px;
+//   height: 600px;
+//   background-color: lightskyblue;
+//   position: relative;
+//   font-size: 200px;
+//   text-align: center;
+//   color: var(--font-color);
+// }
+
+// .player {
+//   width: 60px;
+//   height: 85px;
+//   background-color: blueviolet;
+//   position: absolute;
+// }
+
+// .platform {
+//   width: 85px;
+//   height: 15px;
+//   background-color: greenyellow;
+//   position: absolute;
+// }
+
+* {
+
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+
+}
+
+html {
+
+  height: 100%;
+  width: 100%;
+
+}
+
+body {
+
+  align-content: space-around;
+  background-color: #202830;
+  color: #ffffff;
+  display: grid;
+  grid-template-columns: auto;
+  grid-template-rows: auto auto auto;
+  height: 100%;
+  justify-items: center;
+  padding: 0 8px;
+  width: 100%;
+
+}
