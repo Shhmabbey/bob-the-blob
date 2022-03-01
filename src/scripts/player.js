@@ -29,7 +29,7 @@ class Player {
   }
 
   isFalling() {
-    return this.yVelocity >= 0;
+    return this.yVelocity > 0;
   }
 
   still_on_platform() {  // todo: think about this

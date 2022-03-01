@@ -3,6 +3,9 @@
   const Player = require('./scripts/player');
   
   const DISPLAY_WRAP = false;
+  const GRAVITY = 0.78;
+  const RUN_SPEED = 0.7;
+  const JUMP_INIT_VELOCITY = 16.5;
 
   var displayWidth, displayHeight, controller, playerMaxHeight;
 
@@ -23,7 +26,7 @@
   let maxPlatforms = 6;
   let platforms = [];
 
-  playerMaxHeight = displayHeight * .4;
+  playerMaxHeight = (displayHeight * .4);
 
   controller = {
     // physical state of key, key being pressed. true = down false = up
@@ -72,20 +75,18 @@
     }
   }
 
-  function movePlatforms() {
-    if (player.y < (bg.height * .4)) { // ok?
-      platforms.forEach((platform) => {
-        platform.y += 15; // ok?
+  function movePlatforms(distance) {
+    platforms.forEach((platform) => {
+      platform.y += distance; 
 
-        if (platform.y > displayHeight) {
-          // level++; 
-          platforms.shift();
+      // if (platform.y > displayHeight) {
+      //   // level++; 
+      //   platforms.shift();
 
-          let newplatform = new Platform(0, displayWidth, platformWidth, platformHeight);
-          platforms.push(newplatform);
-        }
-      })
-    }
+      //   let newplatform = new Platform(0, displayWidth, platformWidth, platformHeight);
+      //   platforms.push(newplatform);
+      // }
+    })
   }
 
   function checkCollision() {
@@ -113,16 +114,16 @@
       controller.up.active = false;
       player.jumping = true;
       player.onPlatform = -1;
-      player.yVelocity -= 30; // initial jump velocity
+      player.yVelocity -= JUMP_INIT_VELOCITY;
     }
     if (controller.left.active) {
       /* To change the animation, call animation.change. */
       // player.animation.change(sprite_sheet.frame_sets[2], 15);
-      player.xVelocity -= 0.5;
+      player.xVelocity -= RUN_SPEED;
     }
     if (controller.right.active) {
       // player.animation.change(sprite_sheet.frame_sets[1], 15);
-      player.xVelocity += 0.5;
+      player.xVelocity += RUN_SPEED;
     }
     /* If you're just standing still, change the animation to standing still. */
     // if (!controller.left.active && !controller.right.active) {
@@ -130,7 +131,7 @@
     // }
     applyGravity();
     player.xVelocity *= 0.9; // dampening factor
-    player.yVelocity *= 0.9;
+    // player.yVelocity *= 0.9;
   }
 
   function applyGravity() {
@@ -142,7 +143,7 @@
         player.onPlatform = -1;
       }
     } else {
-      player.yVelocity += 0.6;
+      player.yVelocity += GRAVITY;
     }
   }
 
@@ -151,7 +152,7 @@
     if (!DISPLAY_WRAP) {
       // saturate x position
       player.x = Math.min(player.x, displayWidth);
-      player.x = Math.max(player.x, 0);
+      player.x = Math.max(player.x, 0); //might not be working
     }
     else {
       // TODO wrap logic
@@ -161,11 +162,12 @@
   function updatePlayerPosition() {
     player.x += player.xVelocity;
     player.y += player.yVelocity;
-
+    // player.y += player.yVelocity;
+    
     if (player.y < playerMaxHeight) {
-      let platformMoveDistance = player.y - playerMaxHeight;
-      player.y = playerMaxHeight;
-      movePlatforms(platformMoveDistance);
+      // player.y += player.yVelocity;
+      // console.log(player.yVelocity);
+      movePlatforms(player.yVelocity);
     }
 
     checkCollision();
@@ -174,7 +176,6 @@
 
 
   function mainLoop() {
-    movePlatforms();
     updatePlayerVelocity();
     updatePlayerPosition();
     // player.animation.update();
