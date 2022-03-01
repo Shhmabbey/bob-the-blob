@@ -2,7 +2,6 @@
   const Platform = require('./scripts/platform');
   const Player = require('./scripts/player');
   
-  // forces need to scale with display size
   const DISPLAY_WRAP = false;
   const GRAVITY = 0.78;
   const RUN_SPEED = 0.7;
@@ -16,7 +15,7 @@
   let score = 0;
 
   let playerHeight = 30; // Scale
-  let playerWidth = 30; // Scales
+  let playerWidth = 30; // Scale
   var player = new Player(playerHeight, playerWidth);
   
 
@@ -41,7 +40,7 @@
       switch (event.keyCode) {
         case 37:// left key
           if (controller.left.state != keyState) controller.left.active = keyState;
-          controller.left.state = keyState;// Always update the physical state.
+          controller.left.state = keyState;
           break;
         case 38:// up key
           if (controller.up.state != keyState) controller.up.active = keyState;
@@ -52,19 +51,16 @@
           controller.right.state = keyState;
           break;
         case 32: // space bar -- DEBUG
-          console.log(player)
+          console.log(player);
+          break;
       }
     }
-
   }
 
-
-  // static class method or factory mehtod?
-  function generatePlatforms() {
+  function generateInitialPlatforms() {
     for (let i = 0; i < maxPlatforms; i++) {
       let newplatformHeight = 100 + i * (displayHeight / maxPlatforms);
-      let newplatform = new Platform(newplatformHeight, displayWidth, platformWidth, platformHeight);
-      platforms.push(newplatform);
+      platforms.push(new Platform(newplatformHeight, displayWidth, platformWidth, platformHeight));
     }
   }
 
@@ -74,8 +70,7 @@
 
       if (platform.y > displayHeight) {
         platforms.pop();
-        let newplatform = new Platform(0, displayWidth, platformWidth, platformHeight);
-        platforms.unshift(newplatform);
+          platforms.unshift(new Platform(0, displayWidth, platformWidth, platformHeight));
       }
     })
   }
@@ -92,7 +87,7 @@
       ) {
         player.jumping = false;
         player.yVelocity = 0;
-        player.y = platform.top() - playerHeight;
+        player.y = platform.top() - player.height;
         player.onPlatform = platform
         return true
       }
@@ -120,7 +115,6 @@
     //   player.animation.change(sprite_sheet.frame_sets[0], 20);
     // }
     applyGravity();
-
     player.xVelocity *= 0.9; // dampening factor
   }
 
@@ -194,25 +188,26 @@
 
   function render() {
     resize();
-    display.drawImage( bg, 0, 0, bg.width, bg.height, 0, 0, displayWidth, displayHeight);
+
+    display.drawImage(bg, 0, 0, bg.width, bg.height, 0, 0, displayWidth, displayHeight);
+
     display.font = "30px Arial";
     display.fillStyle = "white";
     display.fillText(`${Math.floor(score * 10) / 10}`, 50, 50);
+
     display.fillStyle = "#7ec0ff";
     platforms.forEach((platform) => {
       display.fillRect(platform.x, platform.y, platform.width, platform.height);
     });
 
     display.drawImage(sprite, player.x, player.y, player.width, player.height);
-
-
   }
 
   // add listener for click to start game
 
   bg.addEventListener('load', () => {
     resize();
-    generatePlatforms();
+    generateInitialPlatforms();
     setPlayerInitialPosition();
 
     window.addEventListener("resize", resize);
@@ -220,6 +215,5 @@
     window.addEventListener("keyup", controller.keyUpDown);
     window.requestAnimationFrame(mainLoop);
   })
-
 
 })();
