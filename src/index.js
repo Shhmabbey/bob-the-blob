@@ -11,6 +11,8 @@
   var displayWidth, displayHeight, controller, playerMaxHeight;
 
   let display = document.querySelector("canvas").getContext("2d");
+
+  let netPosition = 0;
   let score = 0;
 
   let playerHeight = 30; // Scale
@@ -70,12 +72,8 @@
     platforms.forEach((platform) => {
       platform.y -= distance; 
 
-      console.log(displayHeight)
       if (platform.y > displayHeight) {
-        // level++; 
         platforms.pop();
-        console.log(platforms)
-
         let newplatform = new Platform(0, displayWidth, platformWidth, platformHeight);
         platforms.unshift(newplatform);
       }
@@ -90,10 +88,8 @@
         (player.bottom() < platform.bottom()) &&
         (player.bottom() > platform.top()) &&
         (player.right() > platform.left()) &&
-        (player.left() < platform.right()) // &&
-        // (!player.jumping)
+        (player.left() < platform.right())
       ) {
-        console.log('Landed on', platform)
         player.jumping = false;
         player.yVelocity = 0;
         player.y = platform.top() - playerHeight;
@@ -144,9 +140,7 @@
 
   function handlePlayerDisplayEdgeBehavior() {
     if (!DISPLAY_WRAP) {
-      // saturate x position
-      player.x = Math.min(player.x, displayWidth - player.width);
-      player.x = Math.max(player.x, 0); // work checks left
+      player.x = Math.min(Math.max(player.x, 0), displayWidth - player.width);
     }
     else {
       // TODO wrap logic
@@ -167,10 +161,15 @@
     handlePlayerDisplayEdgeBehavior();
   }
 
+  function updateScore() {
+    netPosition -= (player.yVelocity / 100);
+    score = Math.max(score, netPosition);
+  }
 
   function mainLoop() {
     updatePlayerVelocity();
     updatePlayerPosition();
+    updateScore();
     // player.animation.update();
     render();
     window.requestAnimationFrame(mainLoop);
@@ -195,18 +194,10 @@
 
   function render() {
     resize();
-    display.drawImage(
-      bg,
-      0,
-      0,
-      bg.width,
-      bg.height,
-      0,
-      0,
-      displayWidth,
-      displayHeight
-    );
-
+    display.drawImage( bg, 0, 0, bg.width, bg.height, 0, 0, displayWidth, displayHeight);
+    display.font = "30px Arial";
+    display.fillStyle = "white";
+    display.fillText(`${Math.floor(score * 10) / 10}`, 50, 50);
     display.fillStyle = "#7ec0ff";
     platforms.forEach((platform) => {
       display.fillRect(platform.x, platform.y, platform.width, platform.height);
