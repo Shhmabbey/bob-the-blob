@@ -9,7 +9,7 @@
   const RUN_SPEED = 0.7;
   const JUMP_INIT_VELOCITY = 17.2;
 
-  var displayWidth, displayHeight, controller, playerMaxHeight;
+  var displayWidth, displayHeight, controller, playerMaxCameraHeight;
 
   let display = document.querySelector("canvas").getContext("2d");
 
@@ -90,10 +90,10 @@
         player.jumping = false;
         player.yVelocity = 0;
         player.y = platform.top() - player.height;
-        player.onPlatform = platform
-        return true
+        player.onPlatform = platform;
       }
     })
+    return player.onPlatform !== -1;
   }
 
   function updatePlayerVelocity() {
@@ -153,15 +153,37 @@
 
   function updatePlayerPosition() {
     player.x += player.xVelocity;
-    playerMaxHeight = (displayHeight * .5);
-    
-    if (player.y < playerMaxHeight && !player.isFalling()) {
-      movePlatforms(player.yVelocity);
-    } else {
-      player.y += player.yVelocity;
-    }
+    playerMaxCameraHeight = (displayHeight * .5);
 
-    checkCollision();
+    if (player.isFalling()) {
+      // handle high and low velocity cases
+      if (player.yVelocity > platformHeight) {
+        // if downward velocity is too high, it can clip through the platform
+        // so chunk the velocity and apply iteratively to check for collisions
+        let dest_y = player.y + player.yVelocity;
+        let chunk_size = platformHeight / 2;
+        let num_chunks = (player.yVelocity / chunk_size) + 1;
+        for (let i = 0; i < num_chunks; i++) {
+          player.y = Math.min(player.y + chunk_size, dest_y);
+          if (checkCollision()) break;
+        }
+      } else {
+        // if velocity is less than platformHeight, we can simply
+        // add it and check for collision
+        player.y += player.yVelocity;
+        checkCollision();
+      }
+    } else {
+      // Not falling, moving upwards and on flat ground
+      if (player.y < playerMaxCameraHeight) {
+        // if player is moving upwards and above a certain height threshold,
+        // move the platforms instead
+        movePlatforms(player.yVelocity);
+      } else {
+        player.y += player.yVelocity;
+      }
+    }
+    // checkCollision();
     handlePlayerDisplayEdgeBehavior();
   }
 
