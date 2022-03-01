@@ -2,6 +2,8 @@
   const Platform = require('./scripts/platform');
   const Player = require('./scripts/player');
   
+  const SPRITE_SIZE = 32;
+
   const DISPLAY_WRAP = false;
   const GRAVITY = 0.78;
   const RUN_SPEED = 0.7;
@@ -14,8 +16,8 @@
   let netPosition = 0;
   let score = 0;
 
-  let playerHeight = 30; // Scale
-  let playerWidth = 30; // Scale
+  let playerHeight = 32; // Scale
+  let playerWidth = 32; // Scale
   var player = new Player(playerHeight, playerWidth);
   
 
@@ -118,6 +120,14 @@
     player.xVelocity *= 0.9; // dampening factor
   }
 
+  function updatePlayerAnimation() {
+    if (controller.left.active) {
+      player.lookLeft();
+    } else if (controller.right.active) {
+      player.lookRight();
+    }
+  }
+
   function applyGravity() {
     if (player.onPlatform !== -1) {
       // check if player falls off side of platform => apply gravity
@@ -164,7 +174,7 @@
     updatePlayerVelocity();
     updatePlayerPosition();
     updateScore();
-    // player.animation.update();
+    updatePlayerAnimation();
     render();
     window.requestAnimationFrame(mainLoop);
   };
@@ -200,7 +210,18 @@
       display.fillRect(platform.x, platform.y, platform.width, platform.height);
     });
 
-    display.drawImage(sprite, player.x, player.y, player.width, player.height);
+    display.drawImage(
+      player.spritesheet,
+      SPRITE_SIZE * player.spriteIndex,
+      0,
+      SPRITE_SIZE,
+      SPRITE_SIZE,
+      player.x,
+      player.y, 
+      player.width,
+      player.height
+    );
+    // display.drawImage(sprite, player.x, player.y, player.width, player.height);
   }
 
   // add listener for click to start game
