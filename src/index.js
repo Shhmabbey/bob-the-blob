@@ -363,11 +363,13 @@
     updatePlayerVelocity();
     updatePlayerPosition();
     checkBirbCollision();
-    // generateBirbs();
     updateScore();
     updatePlayerAnimation();
+    // if click => playingGame = true, render game
+    // if game over => playingGame = false, gameOver = true;
+    // if game over  === false // clear arrays
     render();
-    window.requestAnimationFrame(mainLoop); // if game over  === false // clear arrays
+    window.requestAnimationFrame(mainLoop); 
   }
   // add listener for click to start game
 
