@@ -6,7 +6,7 @@ class Player {
     this.height = playerHeight;
     this.width = playerWidth;
 
-    this.onPlatform = -1; // not on platform
+    this.onPlatform = -1;
     this.x = 0;
     this.y = 0;
 
@@ -23,6 +23,7 @@ class Player {
     if (this.struck) {
       this.onPlatform = -1;
       this.isAwake = false;
+      this.yVelocity = 0;
       this.y += this.yVelocity * 6;
     }
   }
@@ -37,6 +38,7 @@ class Player {
 
   top() {
     // TO DO: half when squished for birb-ducking
+    // return (this.squished ? this.y + (this.height * 3 / 4) : this.y)
     return this.y; 
   }
 
