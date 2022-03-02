@@ -1,4 +1,5 @@
-# Jitterbug 🐛🐛☕🌳
+# ![Jitterbug](https://shhmabbey.github.io/jitterbug/) 🐛🐛☕🌳
+
 
 ## Overview
 You are a cute little bug with a passion for coffee! Jump from tree branch to tree branch. Collect cups of coffee as you travel higher up the tree. Be wary of predators and careful not to fall!
