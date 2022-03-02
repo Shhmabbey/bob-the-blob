@@ -2,7 +2,7 @@ class Birb {
   constructor(displayWidth, y, BIRB_SIZE, GRAVITY) {
     // this.x = Math.floor(Math.random() * 3) * (displayWidth / 6); //dif speed or loactions
     this.x = Math.floor(Math.random() * 2) * (displayWidth);
-    this.y = y; // move with platforms
+    this.y = y;
     this.indexX = 0;
     this.indexY = Math.floor(Math.random() * 2);
     this.directions = ['left', 'right']
@@ -30,7 +30,8 @@ class Birb {
   }
 
   falling() {
-    this.y += GRAVITY;
+    this.isAwake = false;
+    this.y += this.yVelocity * 6;
   }
 
   handleBirbDisplayEdgeBehavoir() {

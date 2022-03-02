@@ -15,18 +15,20 @@
   const SUPER_JUMP_VELOCITY = 30;
   const DAMPEN = 0.9;
 
-  var displayWidth, displayHeight, controller, playerMaxCameraHeight;
+  var displayWidth, displayHeight, controller, playerMaxCameraHeight, birbCollision;
 
   let display = document.querySelector("canvas").getContext("2d");
 
   let netPosition = 0;
   let score = 0;
+  let hitScore = 0;
 
   var player = new Player(SPRITE_SIZE, SPRITE_SIZE);  
   var background = new Background();
   
   let birbs = [];
   let maxBirbs;
+  let birbHitValue = 10;
 
   let platformWidth = 145;
   let platformHeight = 15;
@@ -115,7 +117,38 @@
     background.y += distance; 
   }
 
-  function checkCollision() {
+  function birbAbovePlayer(birb) {
+    return (birb.bottom() <= player.bottom())
+  }
+
+  function checkBirbCollision() {
+    birbs.forEach((birb) => {
+      birbCollision = (
+        (player.top() < birb.bottom()) &&
+        (player.bottom() > birb.top()) &&
+        (player.right() > birb.left()) && 
+        (player.left() < birb.right())
+        );
+
+      if (birbCollision && birbAbovePlayer(birb)) {  
+        birb.struck = true;
+        player.unsquish();
+        controller.down.active = false;
+        player.falling();
+        if (birb.direction() === 'right') {
+          player.x -= platformWidth;
+        } else {
+          player.x += platformWidth;
+        }
+      } else if (birbCollision && player.jumping && !birbAbovePlayer(birb)) {
+        hitScore += 1;
+        jump(); // TODO: make bounce larger
+        birb.falling();
+      }
+    })
+  }
+
+  function checkPlatformCollision() {
     platforms.forEach(platform => {
       if (
         player.isFalling() &&
@@ -212,13 +245,13 @@
         let numChunks = (player.yVelocity / chunkSize) + 1;
         for (let i = 0; i < numChunks; i++) {
           player.y = Math.min(player.y + chunkSize, destY);
-          if (checkCollision()) break;
+          if (checkPlatformCollision()) break;
         }
       } else {
         // if velocity is less than platformHeight, we can simply
         // add it and check for collision
         player.y += player.yVelocity;
-        checkCollision();
+        checkPlatformCollision();
       }
     } else {
       // Not falling, moving upwards and on flat ground
@@ -231,7 +264,6 @@
         player.y += player.yVelocity;
       }
     }
-    // checkCollision();
     handlePlayerDisplayEdgeBehavior();
   }
 
@@ -289,9 +321,10 @@
   }
   
   function drawScore() {
-    display.font = "30px Arial";
+    display.font = "24px Arial";
     display.fillStyle = "white";
-    display.fillText(`${Math.floor(score * 10) / 10}`, 50, 50);
+    display.fillText(`Score: ${Math.floor(score * 10) / 10}`, 25, 50);
+    display.fillText(`Birbs Hit: ${hitScore}`, 25, 80);
   }
 
   function drawPlatforms() {
@@ -330,6 +363,7 @@
   function mainLoop() { // start
     updatePlayerVelocity();
     updatePlayerPosition();
+    checkBirbCollision();
     // generateBirbs();
     updateScore();
     updatePlayerAnimation();
