@@ -1,4 +1,4 @@
-# ![Jitterbug](https://shhmabbey.github.io/jitterbug/) 🐛🐛☕🌳
+# [Jitterbug](https://shhmabbey.github.io/jitterbug/) 🐛🐛☕🌳
 
 
 ## Overview
