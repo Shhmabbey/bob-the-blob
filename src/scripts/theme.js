@@ -7,14 +7,14 @@ const theme = {
     '--primary-color': '#325b97',
     '--secondary-color': '#9cafeb',
     '--font-color': '#e1e1ff',
-    '--bg-color': '#000013',
+    '--bg-color': '#000137',
     '--heading-color': '#818cab'
   },
   light: {
     '--primary-color': '#0d0b52',
     '--secondary-color': '#3458b9',
     '--font-color': '#424242',
-    '--bg-color': '#ffffff',
+    '--bg-color': '#E5CCCA',
     '--heading-color': '#292922'
   }
 };
