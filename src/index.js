@@ -8,7 +8,9 @@
   const DISPLAY_WRAP = false;
   const GRAVITY = 0.78;
   const RUN_SPEED = 0.7;
+  const CRAWL_SPEED = 0.2;
   const JUMP_INIT_VELOCITY = 18.2;
+  const SUPER_JUMP_VELOCITY = 30;
   const DAMPEN = 0.9;
 
   var displayWidth, displayHeight, controller, playerMaxCameraHeight;
@@ -30,22 +32,29 @@
     left: { active: false, state: false },     // physical state of key, key being pressed. true = down false = up
     right: { active: false, state: false },    // active is virtual state
     up: { active: false, state: false },
+    down: { active:false, state: false},
 
     keyUpDown: function (event) {
       var keyState = (event.type == "keydown") ? true : false;
-
+      // console.log(event.keyCode)
       switch (event.keyCode) {
-        case 37:// left key
+        case 37: // left key
           if (controller.left.state != keyState) controller.left.active = keyState;
           controller.left.state = keyState;
           break;
-        case 38:// up key
+        case 38: // up key
           if (controller.up.state != keyState) controller.up.active = keyState;
           controller.up.state = keyState;
           break;
-        case 39:// right key
+        case 39: // right key
           if (controller.right.state != keyState) controller.right.active = keyState;
           controller.right.state = keyState;
+          break;
+        case 40: // down key is a toggle
+          if (controller.down.state != keyState) {
+            if (keyState) controller.down.active = !controller.down.active;
+          }
+          controller.down.state = keyState;
           break;
         case 32: // space bar -- DEBUG
           console.log(player);
@@ -94,19 +103,32 @@
     return player.onPlatform !== -1;
   }
 
-  function updatePlayerVelocity() {
-    if (controller.up.active && !player.jumping) {
-      controller.up.active = false;
-      player.jumping = true;
-      player.onPlatform = -1;
+  function jump() {
+    controller.up.active = false;
+    player.jumping = true;
+    player.onPlatform = -1;
+    if (controller.down.active) {
+      controller.down.active = false;
+      player.unsquish();
+      player.yVelocity -= SUPER_JUMP_VELOCITY;
+    } else {
       player.yVelocity -= JUMP_INIT_VELOCITY;
     }
-    if (controller.left.active) {
-      player.xVelocity -= RUN_SPEED;
-    }
-    if (controller.right.active) {
-      player.xVelocity += RUN_SPEED;
-    }
+  }
+
+  function moveLeft(){
+    player.squished ? player.xVelocity -= CRAWL_SPEED : player.xVelocity -= RUN_SPEED;
+  }
+
+  function moveRight() {
+    player.squished ? player.xVelocity += CRAWL_SPEED : player.xVelocity += RUN_SPEED;
+  }
+
+  function updatePlayerVelocity() {
+    if (controller.up.active && !player.jumping) jump();
+    if (controller.left.active) moveLeft();
+    if (controller.right.active) moveRight();
+
     applyGravity();
     player.xVelocity *= DAMPEN;
   }
@@ -116,6 +138,10 @@
       player.lookLeft();
     } else if (controller.right.active) {
       player.lookRight();
+    }
+    
+    if (player.onPlatform !== -1) {
+      (controller.down.active) ? player.squish() : player.unsquish();
     }
   }
 
