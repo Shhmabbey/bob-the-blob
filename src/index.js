@@ -1,9 +1,11 @@
 (function () {
   const Platform = require('./scripts/platform');
   const Player = require('./scripts/player');
-  const Background = require('./scripts/background')
+  const Background = require('./scripts/background');
+  const Birb = require('./scripts/birb');
   
   const SPRITE_SIZE = 32;
+  const BIRB_SIZE = 32;
 
   const DISPLAY_WRAP = false;
   const GRAVITY = 0.78;
@@ -22,6 +24,9 @@
 
   var player = new Player(SPRITE_SIZE, SPRITE_SIZE);  
   var background = new Background();
+  
+  let birbs = [];
+  let maxBirbs;
 
   let platformWidth = 145;
   let platformHeight = 15;
@@ -63,6 +68,34 @@
     }
   }
 
+  function generateBirbs() {
+    maxBirbs = Birb.oddsOfBirbGeneration(score); // problematic 
+
+    for (let i = birbs.length; i < maxBirbs; i++){
+      // let lastBirb = birbs[birbs.length - 1]
+      // if (!lastBirb) {
+      //   birbs.push(new Birb(displayWidth, displayHeight, BIRB_SIZE, GRAVITY));
+      //   i++;
+      //   break;
+      // }
+      // if (lastBirb.y > (displayHeight / 6)) birbs.push(new Birb(displayWidth, displayHeight, BIRB_SIZE, GRAVITY));
+      let birbY = (0 + (i * (displayHeight / maxBirbs)));
+      birbs.push(new Birb(displayWidth, birbY, BIRB_SIZE, GRAVITY));
+      
+      i++;
+    }
+  }
+
+  function moveBirbs(distance) {
+    birbs.forEach((birb) => {
+      birb.y -= distance;
+
+      if (birb.y > displayHeight) {
+        birbs.pop();
+      }
+    })
+  }
+
   function generateInitialPlatforms() {
     for (let i = 0; i < maxPlatforms; i++) {
       let newPlatformHeight = 100 + i * (displayHeight / maxPlatforms);
@@ -76,9 +109,14 @@
 
       if (platform.y > displayHeight) {
         platforms.pop();
-          platforms.unshift(new Platform(0, displayWidth, platformWidth, platformHeight));
+        platforms.unshift(new Platform(0, displayWidth, platformWidth, platformHeight));
       }
     })
+  }
+
+  function moveCamera(distance) {
+    movePlatforms(distance);
+    moveBirbs(distance);
   }
 
   function moveBackground(distance) {
@@ -195,7 +233,7 @@
       if (player.y < playerMaxCameraHeight) {
         // if player is moving upwards and above a certain height threshold,
         // move the platforms and background instead
-        movePlatforms(player.yVelocity);
+        moveCamera(player.yVelocity); // move objects in game downwards
         moveBackground(player.yVelocity);
       } else {
         player.y += player.yVelocity;
@@ -209,15 +247,6 @@
     netPosition -= (player.yVelocity / 100);
     score = Math.max(score, netPosition);
   }
-
-  function mainLoop() {
-    updatePlayerVelocity();
-    updatePlayerPosition();
-    updateScore();
-    updatePlayerAnimation();
-    render();
-    window.requestAnimationFrame(mainLoop);
-  };
 
   function setPlayerInitialPosition() {
     player.x = platforms[maxPlatforms - 1].x + ((platformWidth - player.width) / 2);
@@ -236,9 +265,21 @@
     display.imageSmoothingEnabled = false;
   };
 
-  function render() {
-    resize();
-
+  function drawPlayer() {
+    display.drawImage(
+      player.spritesheet,
+      SPRITE_SIZE * player.spriteIndex,
+      0,
+      SPRITE_SIZE,
+      SPRITE_SIZE,
+      player.x,
+      player.y,
+      player.width,
+      player.height
+    );
+  }
+  
+  function drawBackground() {
     if (background.y < 0) { // TO DO: broken loop
       background.y = (background.imgHeight - background.height);
     }
@@ -247,35 +288,62 @@
       0,
       background.y,
       background.backgroundSheet.width, // investigate why doesn't work when shrunk
-      background.height, 
+      background.height,
       0,
       0,
       displayWidth,
       displayHeight
     )
-
+  }
+  
+  function drawScore() {
     display.font = "30px Arial";
     display.fillStyle = "white";
     display.fillText(`${Math.floor(score * 10) / 10}`, 50, 50);
+  }
 
+  function drawPlatforms() {
     display.fillStyle = "#7ec0ff";
     platforms.forEach((platform) => {
       display.fillRect(platform.x, platform.y, platform.width, platform.height);
     });
-
-    display.drawImage(
-      player.spritesheet,
-      SPRITE_SIZE * player.spriteIndex,
-      0,
-      SPRITE_SIZE,
-      SPRITE_SIZE,
-      player.x,
-      player.y, 
-      player.width,
-      player.height
-    );
   }
 
+  function drawBirbs() {
+    birbs.forEach((birb) => {
+      birb.move();
+      display.drawImage(
+        birb.birbSheet,
+        BIRB_SIZE * birb.indexX,
+        BIRB_SIZE * birb.indexY,
+        BIRB_SIZE,
+        BIRB_SIZE,
+        birb.x,
+        birb.y,
+        birb.width,
+        birb.height
+      )
+    })
+  }
+  
+  function render() {
+    resize();
+    drawBackground();
+    drawScore();
+    drawPlatforms();
+    drawPlayer();
+    drawBirbs();
+  }
+  
+  function mainLoop() {
+    updatePlayerVelocity();
+    updatePlayerPosition();
+    generateBirbs();
+    updateScore();
+    updatePlayerAnimation();
+    render();
+    window.requestAnimationFrame(mainLoop);
+  }
   // add listener for click to start game
 
   background.backgroundSheet.addEventListener('load', () => {
