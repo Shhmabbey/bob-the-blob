@@ -43,7 +43,6 @@
 
     keyUpDown: function (event) {
       var keyState = (event.type == "keydown") ? true : false;
-      // console.log(event.keyCode)
       switch (event.keyCode) {
         case 37: // left key
           if (controller.left.state != keyState) controller.left.active = keyState;
@@ -63,8 +62,8 @@
           }
           controller.down.state = keyState;
           break;
-        case 32: // space bar -- DEBUG
-          console.log(player);
+        case 32: // space bar 
+          // TODO start game, pause game
           break;
       }
     }

@@ -296,6 +296,13 @@ html {
   width: 100%;
 }
 
+.container {
+  display: grid;
+  justify-items: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 body {
   align-content: space-around;
   display: grid;
