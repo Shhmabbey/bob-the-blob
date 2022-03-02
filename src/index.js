@@ -9,6 +9,7 @@
   const GRAVITY = 0.78;
   const RUN_SPEED = 0.7;
   const JUMP_INIT_VELOCITY = 18.2;
+  const DAMPEN = 0.9;
 
   var displayWidth, displayHeight, controller, playerMaxCameraHeight;
 
@@ -19,11 +20,6 @@
 
   var player = new Player(SPRITE_SIZE, SPRITE_SIZE);  
   var background = new Background();
-
-  // let bg = new Image();
-  // bg.src = "assets/platform/bg4.png"
-  // let sprite = new Image();
-  // sprite.src = "assets/Sprites/Cloud_Ball_Blue.png"
 
   let platformWidth = 145;
   let platformHeight = 15;
@@ -60,8 +56,8 @@
 
   function generateInitialPlatforms() {
     for (let i = 0; i < maxPlatforms; i++) {
-      let newplatformHeight = 100 + i * (displayHeight / maxPlatforms);
-      platforms.push(new Platform(newplatformHeight, displayWidth, platformWidth, platformHeight));
+      let newPlatformHeight = 100 + i * (displayHeight / maxPlatforms);
+      platforms.push(new Platform(newPlatformHeight, displayWidth, platformWidth, platformHeight));
     }
   }
 
@@ -81,7 +77,6 @@
   }
 
   function checkCollision() {
-    // TODO ensure collision detection when high yVelocity
     platforms.forEach(platform => {
       if (
         player.isFalling() &&
@@ -107,20 +102,13 @@
       player.yVelocity -= JUMP_INIT_VELOCITY;
     }
     if (controller.left.active) {
-      /* To change the animation, call animation.change. */
-      // player.animation.change(sprite_sheet.frame_sets[2], 15);
       player.xVelocity -= RUN_SPEED;
     }
     if (controller.right.active) {
-      // player.animation.change(sprite_sheet.frame_sets[1], 15);
       player.xVelocity += RUN_SPEED;
     }
-    // If you're just standing still, change the animation to standing still.
-    // if (!controller.left.active && !controller.right.active) {
-    //   player.animation.change(sprite_sheet.frame_sets[0], 20);
-    // }
     applyGravity();
-    player.xVelocity *= 0.9; // dampening factor
+    player.xVelocity *= DAMPEN;
   }
 
   function updatePlayerAnimation() {
@@ -133,7 +121,7 @@
 
   function applyGravity() {
     if (player.onPlatform !== -1) {
-      // check if player falls off side of platform => apply gravity
+      // if player falls off side of platform => apply gravity
       let platform = player.onPlatform;
       if (!((player.right() > platform.left()) && (player.left() < platform.right()))) {
         player.jumping = true;
@@ -163,11 +151,11 @@
       if (player.yVelocity > platformHeight) {
         // if downward velocity is too high, it can clip through the platform
         // so chunk the velocity and apply iteratively to check for collisions
-        let dest_y = player.y + player.yVelocity;
-        let chunk_size = platformHeight / 2;
-        let num_chunks = (player.yVelocity / chunk_size) + 1;
-        for (let i = 0; i < num_chunks; i++) {
-          player.y = Math.min(player.y + chunk_size, dest_y);
+        let destY = player.y + player.yVelocity;
+        let chunkSize = platformHeight / 2;
+        let numChunks = (player.yVelocity / chunkSize) + 1;
+        for (let i = 0; i < numChunks; i++) {
+          player.y = Math.min(player.y + chunkSize, destY);
           if (checkCollision()) break;
         }
       } else {
@@ -240,8 +228,6 @@
       displayHeight
     )
 
-    // display.drawImage(bg, 0, 0, bg.width, bg.height, 0, 0, displayWidth, displayHeight);
-
     display.font = "30px Arial";
     display.fillStyle = "white";
     display.fillText(`${Math.floor(score * 10) / 10}`, 50, 50);
@@ -262,7 +248,6 @@
       player.width,
       player.height
     );
-    // display.drawImage(sprite, player.x, player.y, player.width, player.height);
   }
 
   // add listener for click to start game
