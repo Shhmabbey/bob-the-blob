@@ -20,10 +20,10 @@
   var player = new Player(SPRITE_SIZE, SPRITE_SIZE);  
   var background = new Background();
 
-  let bg = new Image();
-  bg.src = "assets/platform/bg4.png"
-  let sprite = new Image();
-  sprite.src = "assets/Sprites/Cloud_Ball_Blue.png"
+  // let bg = new Image();
+  // bg.src = "assets/platform/bg4.png"
+  // let sprite = new Image();
+  // sprite.src = "assets/Sprites/Cloud_Ball_Blue.png"
 
   let platformWidth = 145;
   let platformHeight = 15;
@@ -211,7 +211,7 @@
   }
 
   function resize() {
-    let aspectRatio = bg.width / bg.height;
+    let aspectRatio = background.width / background.height;
 
     displayHeight = (document.documentElement.clientHeight) - 100;
     displayWidth = displayHeight * aspectRatio;
@@ -232,8 +232,8 @@
       background.backgroundSheet,
       0,
       background.y,
-      bg.width, // background.width, // investigate why doesn't work when shrunk
-      bg.height, // background.height,
+      background.backgroundSheet.width, // investigate why doesn't work when shrunk
+      background.height, 
       0,
       0,
       displayWidth,
@@ -267,7 +267,7 @@
 
   // add listener for click to start game
 
-  bg.addEventListener('load', () => {
+  background.backgroundSheet.addEventListener('load', () => {
     resize();
     generateInitialPlatforms();
     setPlayerInitialPosition();
