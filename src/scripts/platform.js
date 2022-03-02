@@ -5,6 +5,12 @@ class Platform {
 
     this.width = platformWidth;
     this.height = platformHeight;
+
+    this.largePlatformSheet = new Image()
+    this.largePlatformSheet.src = "assets/large_plateforms.png";
+    this.largeWidth = 196.25;
+    this.largeHeight = 118;
+    this.largePlatformIndex = Math.random() * (3)
   }
 
   left() {
