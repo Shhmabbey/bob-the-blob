@@ -1,6 +1,7 @@
 class Player {
   constructor(playerHeight, playerWidth, SPRITE_SIZE) {
     this.jumping = true;
+    this.squished = false;
     this.height = playerHeight;
     this.width = playerWidth;
 
@@ -26,7 +27,8 @@ class Player {
   }
 
   top() {
-    return this.y;
+    // TO DO: half when squished for birb-ducking
+    return this.y; 
   }
 
   bottom() {
