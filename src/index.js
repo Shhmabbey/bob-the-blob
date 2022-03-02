@@ -68,20 +68,11 @@
     }
   }
 
-  function generateBirbs() {
-    maxBirbs = Birb.oddsOfBirbGeneration(score); // problematic 
-
-    for (let i = birbs.length; i < maxBirbs; i++){
-      // let lastBirb = birbs[birbs.length - 1]
-      // if (!lastBirb) {
-      //   birbs.push(new Birb(displayWidth, displayHeight, BIRB_SIZE, GRAVITY));
-      //   i++;
-      //   break;
-      // }
-      // if (lastBirb.y > (displayHeight / 6)) birbs.push(new Birb(displayWidth, displayHeight, BIRB_SIZE, GRAVITY));
-      let birbY = (0 + (i * (displayHeight / maxBirbs)));
+  function generateInitialBirbs() {
+    maxBirbs = 4; // BUG: doesn't denerate max birbs only 2
+    for (let i = 0; i < maxBirbs; i++){
+      let birbY = (50  + (i * (displayHeight / maxBirbs)));
       birbs.push(new Birb(displayWidth, birbY, BIRB_SIZE, GRAVITY));
-      
       i++;
     }
   }
@@ -92,6 +83,7 @@
 
       if (birb.y > displayHeight) {
         birbs.pop();
+        birbs.unshift(new Birb(displayWidth, 0, BIRB_SIZE, GRAVITY));
       }
     })
   }
@@ -335,20 +327,21 @@
     drawBirbs();
   }
   
-  function mainLoop() {
+  function mainLoop() { // start
     updatePlayerVelocity();
     updatePlayerPosition();
-    generateBirbs();
+    // generateBirbs();
     updateScore();
     updatePlayerAnimation();
     render();
-    window.requestAnimationFrame(mainLoop);
+    window.requestAnimationFrame(mainLoop); // if game over  === false // clear arrays
   }
   // add listener for click to start game
 
   background.backgroundSheet.addEventListener('load', () => {
     resize();
     generateInitialPlatforms();
+    generateInitialBirbs();
     setPlayerInitialPosition();
 
     window.addEventListener("resize", resize);

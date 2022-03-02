@@ -68,12 +68,12 @@ class Birb {
   }
 
 
-  static oddsOfBirbGeneration(currentScore) {
-    if (currentScore < 50 ) return 2;
-    if (currentScore < 150) return 3;
-    if (currentScore < 400) return 5;
-    return 6;
-  }
+  // static oddsOfBirbGeneration(currentScore) {
+  //   // if (currentScore < 50 ) return 2;
+  //   // if (currentScore < 150) return 3;
+  //   // if (currentScore < 400) return 5;
+  //   return 4;
+  // }
 
 }
 
