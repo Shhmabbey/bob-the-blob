@@ -2,6 +2,7 @@ class Player {
   constructor(playerHeight, playerWidth, SPRITE_SIZE) {
     this.jumping = true;
     this.squished = false;
+    this.struck = false;
     this.height = playerHeight;
     this.width = playerWidth;
 
@@ -16,6 +17,14 @@ class Player {
     this.spritesheet.src = "assets/spritesheet_white_blob_transparent.png";
     this.spriteSize = SPRITE_SIZE;
     this.spriteIndex = 0;
+  }
+
+  falling() {
+    if (this.struck) {
+      this.onPlatform = -1;
+      this.isAwake = false;
+      this.y += this.yVelocity * 6;
+    }
   }
 
   right() {
