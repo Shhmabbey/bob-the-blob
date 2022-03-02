@@ -1,13 +1,14 @@
 (function () {
   const Platform = require('./scripts/platform');
   const Player = require('./scripts/player');
+  const Background = require('./scripts/background')
   
   const SPRITE_SIZE = 32;
 
   const DISPLAY_WRAP = false;
   const GRAVITY = 0.78;
   const RUN_SPEED = 0.7;
-  const JUMP_INIT_VELOCITY = 17.2;
+  const JUMP_INIT_VELOCITY = 18.2;
 
   var displayWidth, displayHeight, controller, playerMaxCameraHeight;
 
@@ -16,10 +17,8 @@
   let netPosition = 0;
   let score = 0;
 
-  let playerHeight = 32; // Scale
-  let playerWidth = 32; // Scale
-  var player = new Player(playerHeight, playerWidth);
-  
+  var player = new Player(SPRITE_SIZE, SPRITE_SIZE);  
+  var background = new Background();
 
   let bg = new Image();
   bg.src = "assets/platform/bg4.png"
@@ -75,6 +74,10 @@
           platforms.unshift(new Platform(0, displayWidth, platformWidth, platformHeight));
       }
     })
+  }
+
+  function moveBackground(distance) {
+    background.y += distance; 
   }
 
   function checkCollision() {
@@ -177,8 +180,9 @@
       // Not falling, moving upwards and on flat ground
       if (player.y < playerMaxCameraHeight) {
         // if player is moving upwards and above a certain height threshold,
-        // move the platforms instead
+        // move the platforms and background instead
         movePlatforms(player.yVelocity);
+        moveBackground(player.yVelocity);
       } else {
         player.y += player.yVelocity;
       }
@@ -221,7 +225,22 @@
   function render() {
     resize();
 
-    display.drawImage(bg, 0, 0, bg.width, bg.height, 0, 0, displayWidth, displayHeight);
+    if (background.y < 0) { // TO DO: broken loop
+      background.y = (background.imgHeight - background.height);
+    }
+    display.drawImage(
+      background.backgroundSheet,
+      0,
+      background.y,
+      bg.width, // background.width, // investigate why doesn't work when shrunk
+      bg.height, // background.height,
+      0,
+      0,
+      displayWidth,
+      displayHeight
+    )
+
+    // display.drawImage(bg, 0, 0, bg.width, bg.height, 0, 0, displayWidth, displayHeight);
 
     display.font = "30px Arial";
     display.fillStyle = "white";
