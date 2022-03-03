@@ -6,7 +6,7 @@ class Birb {
     this.indexY = Math.floor(Math.random() * 2);
     this.directions = ['left', 'right']
 
-    this.xVelocity = (Math.floor(Math.random() * 5) + 2);
+    this.xVelocity = (Math.floor(Math.random() * 2) + 1.5);
     this.yVelocity = GRAVITY;
     this.isAwake = true;
 
