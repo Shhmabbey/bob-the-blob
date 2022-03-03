@@ -332,16 +332,10 @@
   }
   
   function drawScore() {
-    display.drawImage(
-      background.score,
-      16,
-      16
-    )
-
     display.font = "24px Arial";
     display.fillStyle = "white";
     display.fillText(`Score: ${Math.floor(score * 10) / 10}`, 25, 50);
-    display.fillText(`Best: ${Math.floor(score * 10) / 10}`, 25, 80);
+    display.fillText(`Best: ${Math.floor(highScore * 10) / 10}`, 25, 80);
   }
 
   function drawPlatforms() {
