@@ -523,10 +523,10 @@
   function render() {
     resize();
     drawBackground();
-    drawScore();
     drawPlatforms();
     drawPlayer();
     drawBirbs();
+    drawScore();
   }
 
   function checkGameOver() {

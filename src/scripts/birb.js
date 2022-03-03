@@ -14,7 +14,8 @@ class Birb {
     this.height = BIRB_SIZE;
 
     this.birbSheet = new Image()
-    this.birbSheet.src = "assets/blue_birbs.png";
+    this.birb_colors = ["assets/blue_birbs.png", "assets/yellow_birbs.png", "assets/red_birbs.png"]
+    this.birbSheet.src = this.birb_colors[Math.floor(Math.random() * 3)];
     this.birbSize = BIRB_SIZE;
     this.flyZoneMax = displayWidth;
     this.animationFrame = 0
