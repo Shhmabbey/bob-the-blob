@@ -3,6 +3,7 @@
   const Player = require('./scripts/player');
   const Background = require('./scripts/background');
   const Birb = require('./scripts/birb');
+  const Game = require('./scripts/game');
   
   const SPRITE_SIZE = 32;
   const BIRB_SIZE = 32;
@@ -15,9 +16,14 @@
   const SUPER_JUMP_VELOCITY = 30;
   const DAMPEN = 0.9;
 
+  let isPaused = true;
+  let gameOver = false;
+
   var displayWidth, displayHeight, controller, playerMaxCameraHeight, birbCollision;
 
   let display = document.querySelector("canvas").getContext("2d");
+  const audioButton = document.getElementById("play-audio");
+  const audio = document.getElementById("music");
 
   let netPosition = 0;
   let score = 0;
@@ -25,10 +31,11 @@
 
   var player = new Player(SPRITE_SIZE, SPRITE_SIZE);  
   var background = new Background();
+  var game = new Game();
   
   let birbs = [];
   let maxBirbs;
-  let birbHitValue = 10;
+  // let birbHitValue = 10;
 
   let platformWidth = 145;
   let platformHeight = 15;
@@ -64,6 +71,7 @@
           break;
         case 32: // space bar 
           // TODO start game, pause game
+          // call start game loop
           break;
       }
     }
@@ -129,21 +137,28 @@
         (player.left() < birb.right())
         );
 
-      if (birbCollision && birbAbovePlayer(birb)) {  
-        birb.struck = true;
-        player.unsquish();
-        controller.down.active = false;
-        player.falling();
-        if (birb.direction() === 'right') {
-          player.x -= platformWidth;
-        } else {
-          player.x += platformWidth;
-        }
-      } else if (birbCollision && player.jumping && !birbAbovePlayer(birb)) {
-        hitScore += 1;
-        jump(); // TODO: make bounce larger
-        birb.falling();
-      }
+    if (birbCollision) {
+      console.log('collision');
+      gameOver = true;
+      isGameOver();
+    }
+
+
+      // if (birbCollision && birbAbovePlayer(birb)) {
+      //   birb.struck = true;
+      //   player.unsquish();
+      //   controller.down.active = false;
+      //   player.falling();
+      //   if (birb.direction() === 'right') {
+      //     player.x -= platformWidth;
+      //   } else {
+      //     player.x += platformWidth;
+      //   }
+      // } else if (birbCollision && player.jumping && !birbAbovePlayer(birb)) {
+      //   hitScore += 1;
+      //   jump(); // TODO: make bounce larger
+      //   birb.falling();
+      // }
     })
   }
 
@@ -323,7 +338,7 @@
     display.font = "24px Arial";
     display.fillStyle = "white";
     display.fillText(`Score: ${Math.floor(score * 10) / 10}`, 25, 50);
-    display.fillText(`Birbs Hit: ${hitScore}`, 25, 80);
+    // display.fillText(`Birbs Hit: ${hitScore}`, 25, 80);
   }
 
   function drawPlatforms() {
@@ -349,6 +364,126 @@
       )
     })
   }
+
+  function toggleMusic(){
+    audioButton.onclick = function () {
+      audioButton.classList.toggle('active')
+      if (audio.paused) {
+        document.getElementById("play-audio").src = "./assets/darkmodeButtons/musicOn.png"
+        audio.play()
+      } else {
+        document.getElementById("play-audio").src = "./assets/darkmodeButtons/musicOff.png"
+        audio.pause();
+      }
+    }
+  }
+
+  function toggleMenu(){
+    const menuButton = document.getElementById("menu");
+    menuButton.onclick = function(){
+      menuButton.classList.toggle('active')
+      if (menuButton.classList.contains("active")) {
+        isPaused = true;
+        menuButton.src = "./assets/darkmodeButtons/forward.png";
+        drawMenu();
+      } else {
+        isPaused = false;
+        const context = document.querySelector("canvas").getContext("2d");
+        context.clearRect(0, 0, displayWidth, displayHeight)
+        menuButton.src = "./assets/darkmodeButtons/pause.png"
+        mainLoop();
+      }
+    }
+  }
+
+  function drawInstructions(){
+    let thirdDisplay = displayHeight / 3;
+    display.textAlign = "center";
+    display.font = "50px Arial";
+    display.fillStyle = "white";
+    display.fillText(`How to Play:`, displayWidth / 2, thirdDisplay);
+    display.textAlign = "center";
+
+    display.font = "16px Arial";
+    for (let i =0; i < game.instructions.length; i ++) {
+      display.fillText(`${game.instructions[i]}`, displayWidth / 2, thirdDisplay + 50 + (i * 40));
+      display.textAlign = "center";
+    }
+
+    display.drawImage(
+      player.spritesheet,
+      SPRITE_SIZE * 0,
+      0,
+      SPRITE_SIZE,
+      SPRITE_SIZE,
+      (displayWidth *3/4),
+      (displayHeight *3/4),
+      player.width * 2,
+      player.height * 2
+    )
+  }
+
+  function drawGameOver(){
+    let thirdDisplay = displayHeight / 3;
+    display.textAlign = "center";
+    display.font = "50px Arial";
+    display.fillStyle = "white";
+    display.fillText(`Game Over`, displayWidth / 2, thirdDisplay);
+    display.textAlign = "center";
+
+    display.font = "24px Arial";
+    display.fillText(`Score: ${Math.floor(score * 10) / 10}`, displayWidth / 2, thirdDisplay + 50);
+    display.textAlign = "center";
+
+    display.font = "16px Arial";
+    for (let i = 0; i < game.gameOverMessage.length; i ++) {
+      display.fillText(`${game.gameOverMessage[i]}`, displayWidth / 2, thirdDisplay + 100 + (i * 40));
+      display.textAlign = "center";
+    }
+
+    display.drawImage(
+      player.spritesheet,
+      SPRITE_SIZE * 0,
+      0,
+      SPRITE_SIZE,
+      SPRITE_SIZE,
+      (displayWidth *3/4),
+      (displayHeight *3/4),
+      player.width * 2,
+      player.height * 2
+    )
+  }
+
+  function isGameOver() {
+    if (gameOver) {
+      // console.log('GameOver')
+      // document.getElementById("menu").classList.toggle('active');
+      drawMenu();
+    }
+  }
+
+  function loadStartScreen() {
+    document.getElementById("menu").classList.toggle('active');
+    drawMenu();
+  }
+
+  function drawMenu(){
+    const context = document.querySelector("canvas").getContext("2d");
+    context.clearRect(0, 0, displayWidth, displayHeight)
+    display.drawImage(
+      background.menuBackground,
+      0,
+      0,
+      background.menuBackground.width,
+      background.height,
+      0,
+      0,
+      displayWidth,
+      displayHeight
+    )
+    
+    gameOver ? drawGameOver() : drawInstructions();
+  }
   
   function render() {
     resize();
@@ -359,29 +494,30 @@
     drawBirbs();
   }
   
-  function mainLoop() { // start
-    updatePlayerVelocity();
-    updatePlayerPosition();
-    checkBirbCollision();
-    updateScore();
-    updatePlayerAnimation();
-    // if click => playingGame = true, render game
-    // if game over => playingGame = false, gameOver = true;
-    // if game over  === false // clear arrays
-    render();
-    window.requestAnimationFrame(mainLoop); 
+  function mainLoop() {
+    if (!isPaused) {
+      updatePlayerVelocity();
+      updatePlayerPosition();
+      checkBirbCollision();
+      updateScore();
+      updatePlayerAnimation();
+      render();
+      window.requestAnimationFrame(mainLoop); 
+    }
   }
-  // add listener for click to start game
 
   background.backgroundSheet.addEventListener('load', () => {
     resize();
+    loadStartScreen();
     generateInitialPlatforms();
     generateInitialBirbs();
     setPlayerInitialPosition();
+    toggleMusic();
+    toggleMenu();
 
     window.addEventListener("resize", resize);
     window.addEventListener("keydown", controller.keyUpDown);
-    window.addEventListener("keyup", controller.keyUpDown);
+    window.addEventListener("keyup", controller.keyUpDown);    
     window.requestAnimationFrame(mainLoop);
   })
 
