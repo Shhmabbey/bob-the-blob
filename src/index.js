@@ -16,36 +16,34 @@
   const SUPER_JUMP_VELOCITY = 30;
   const DAMPEN = 0.9;
 
-  let isPaused = true;
+  const platformWidth = 145;
+  const platformHeight = 15;
+  const maxPlatforms = 6;
+
+  let maxBirbs;
 
   var displayWidth, displayHeight, controller, playerMaxCameraHeight;
 
-  let display = document.querySelector("canvas").getContext("2d");
+  const display = document.querySelector("canvas").getContext("2d");
   const audioButton = document.getElementById("play-audio");
   const audio = document.getElementById("music");
-
-  let netPosition = 0;
-  let score = 0;
-  let hitScore = 0;
 
   var player = new Player(SPRITE_SIZE, SPRITE_SIZE);  
   var background = new Background();
   var game = new Game();
   
+  let isPaused = true;
   let birbs = [];
-  let maxBirbs;
-  // let birbHitValue = 10;
-
-  let platformWidth = 145;
-  let platformHeight = 15;
-  let maxPlatforms = 6;
   let platforms = [];
+  let netPosition = 0;
+  let score = 0;
 
   controller = {
     left: { active: false, state: false },     // physical state of key, key being pressed. true = down false = up
     right: { active: false, state: false },    // active is virtual state
     up: { active: false, state: false },
     down: { active:false, state: false},
+    space: { active: false, state: false },
 
     keyUpDown: function (event) {
       var keyState = (event.type == "keydown") ? true : false;
@@ -69,8 +67,8 @@
           controller.down.state = keyState;
           break;
         case 32: // space bar 
-          // TODO start game, pause game
-          // call start game loop
+          if (controller.space.state != keyState) controller.space.active = keyState;
+          controller.space.state = keyState;
           break;
       }
     }
@@ -372,21 +370,26 @@
     }
   }
 
-  function toggleMenu(){
+  function toggleMenuOnClick(){
     const menuButton = document.getElementById("menu");
     menuButton.onclick = function(){
-      menuButton.classList.toggle('active')
-      if (menuButton.classList.contains("active")) {
-        isPaused = true;
-        menuButton.src = "./assets/darkmodeButtons/forward.png";
-        drawMenu();
-      } else {
-        isPaused = false;
-        const context = document.querySelector("canvas").getContext("2d");
-        context.clearRect(0, 0, displayWidth, displayHeight)
-        menuButton.src = "./assets/darkmodeButtons/pause.png"
-        mainLoop();
-      }
+      toggleMenu();
+    }
+  }
+
+  function toggleMenu(){
+    const menuButton = document.getElementById("menu");
+    menuButton.classList.toggle('active')
+    if (menuButton.classList.contains("active")) {
+      isPaused = true;
+      menuButton.src = "./assets/darkmodeButtons/forward.png";
+      drawInstructions();
+    } else {
+      isPaused = false;
+      const context = document.querySelector("canvas").getContext("2d");
+      context.clearRect(0, 0, displayWidth, displayHeight)
+      menuButton.src = "./assets/darkmodeButtons/pause.png"
+      mainLoop();
     }
   }
 
@@ -429,6 +432,8 @@
       player.width * 2,
       player.height * 2
     )
+
+    // window.requestAnimationFrame(pauseMenuLoop);
   }
 
   function drawGameOver(){
@@ -451,18 +456,59 @@
   }
 
   function gameOver() {
-    // console.log('GameOver')
-    // document.getElementById("menu").classList.toggle('active');
-    drawMenu();
+    drawGameOver();
+    window.requestAnimationFrame(gameOverLoop);
   }
 
   function loadStartScreen() {
     document.getElementById("menu").classList.toggle('active');
-    drawMenu();
+    drawInstructions();
   }
 
-  function drawMenu(){    
-    checkGameOver() ? drawGameOver() : drawInstructions();
+  // function pauseMenuLoop() {
+  //   // if (controller.space.active) {
+  //   //   toggleMenu()
+  //   // } else {
+  //   //   window.requestAnimationFrame(pauseMenuLoop);
+  //   // }
+  // }
+
+  // function checkSpaceActive(){
+  //   if (controller.space.active) {
+  //     // document.getElementById("menu").classList.toggle('active');
+  //     isPaused = true;
+  //     toggleMenu();
+  //   }
+  // }
+
+  function restartGame(){
+    console.log('restart');
+    player = new Player(SPRITE_SIZE, SPRITE_SIZE);
+    background = new Background();
+    game = new Game();
+    isPaused = false;
+    birbs = [];
+    platforms = [];
+    netPosition = 0;
+    score = 0;
+
+    resize();
+    generateInitialPlatforms();
+    generateInitialBirbs();
+    setPlayerInitialPosition();
+    toggleMusic();
+    toggleMenuOnClick();
+    render();
+
+    mainLoop();
+  }
+
+  function gameOverLoop(){
+    if (controller.space.active) {
+      restartGame();
+    } else {
+      window.requestAnimationFrame(gameOverLoop);
+    }
   }
 
   function playerBelowScreen() {
@@ -488,6 +534,7 @@
       updatePlayerPosition();
       checkBirbCollision();
       updateScore();
+      // checkSpaceActive();
       updatePlayerAnimation();
       render();
       if (checkGameOver()) {
@@ -501,15 +548,16 @@
   background.backgroundSheet.addEventListener('load', () => {
     resize();
     loadStartScreen();
+    // drawInstructions();
     generateInitialPlatforms();
     generateInitialBirbs();
     setPlayerInitialPosition();
     toggleMusic();
-    toggleMenu();
+    toggleMenuOnClick();
 
     window.addEventListener("resize", resize);
     window.addEventListener("keydown", controller.keyUpDown);
-    window.addEventListener("keyup", controller.keyUpDown);    
+    window.addEventListener("keyup", controller.keyUpDown); 
     window.requestAnimationFrame(mainLoop);
   })
 

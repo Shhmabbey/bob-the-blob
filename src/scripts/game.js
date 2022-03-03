@@ -5,7 +5,6 @@ class Game {
       'Toggle the down and up arrow key for a boosted jump.',
       'Don\'t get hit by the birbs!',
       'See how high you can climb.',
-      'Click the space bar to pause or start a new game.',
       'Click the play button to start or resume the game.']
     this.gameOverMessage = ['Click the space bar to start a new game.'];
   }
