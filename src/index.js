@@ -16,9 +16,12 @@
   const SUPER_JUMP_VELOCITY = 30;
   const DAMPEN = 0.9;
 
+  // const platformWidth = 145;
+  // const platformHeight = 15;
+  // const maxPlatforms = 6;
   const platformWidth = 145;
   const platformHeight = 15;
-  const maxPlatforms = 6;
+  const maxPlatforms = 4;
 
   let maxBirbs;
 
@@ -333,10 +336,26 @@
     // display.fillText(`Birbs Hit: ${hitScore}`, 25, 80);
   }
 
-  function drawPlatforms() {
-    display.fillStyle = "#7ec0ff";
+  // function drawPlatforms() {
+  //   display.fillStyle = "#7ec0ff";
+  //   platforms.forEach((platform) => {
+  //     display.fillRect(platform.x, platform.y, platform.width, platform.height);
+  //   });
+  // }
+
+function drawPlatforms() {
     platforms.forEach((platform) => {
-      display.fillRect(platform.x, platform.y, platform.width, platform.height);
+      display.drawImage(
+        platform.largePlatformSheet,
+        platform.largeWidth * platform.indexX,
+        0,
+        platform.largeWidth,
+        platform.largeHeight,
+        platform.x,
+        platform.y,
+        platform.largeWidth,
+        platform.largeHeight
+      )
     });
   }
 
