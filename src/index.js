@@ -147,14 +147,14 @@
       //     player.x += platformWidth;
       //   }
       // } else 
-      // if (birbCollision && player.jumping && !birbAbovePlayer(birb)) {
-      //   // hitScore += 1;
-      //   // jump(); // TODO: make bounce larger
-      //   player.yVelocity = 0;
-      //   player.yVelocity -= JUMP_INIT_VELOCITY;
-      //   birb.falling();
-      //   birbCollision = false;
-      // }
+      if (birbCollision && player.jumping && !birbAbovePlayer(birb)) {
+        // hitScore += 1;
+        // jump(); // TODO: make bounce larger
+        player.yVelocity = 0;
+        player.yVelocity -= JUMP_INIT_VELOCITY;
+        birb.falling();
+        birbCollision = false;
+      }
     })
     return birbCollision;
   }
