@@ -17,9 +17,8 @@
   const DAMPEN = 0.9;
 
   let isPaused = true;
-  let gameOver = false;
 
-  var displayWidth, displayHeight, controller, playerMaxCameraHeight, birbCollision;
+  var displayWidth, displayHeight, controller, playerMaxCameraHeight;
 
   let display = document.querySelector("canvas").getContext("2d");
   const audioButton = document.getElementById("play-audio");
@@ -129,20 +128,14 @@
   }
 
   function checkBirbCollision() {
+    let birbCollision = false
     birbs.forEach((birb) => {
-      birbCollision = (
+      birbCollision ||= (
         (player.top() < birb.bottom()) &&
         (player.bottom() > birb.top()) &&
         (player.right() > birb.left()) && 
         (player.left() < birb.right())
         );
-
-    if (birbCollision) {
-      console.log('collision');
-      gameOver = true;
-      isGameOver();
-    }
-
 
       // if (birbCollision && birbAbovePlayer(birb)) {
       //   birb.struck = true;
@@ -160,6 +153,7 @@
       //   birb.falling();
       // }
     })
+    return birbCollision;
   }
 
   function checkPlatformCollision() {
@@ -397,6 +391,20 @@
   }
 
   function drawInstructions(){
+    const context = document.querySelector("canvas").getContext("2d");
+    context.clearRect(0, 0, displayWidth, displayHeight)
+    display.drawImage(
+      background.menuBackground,
+      0,
+      0,
+      background.menuBackground.width,
+      background.height,
+      0,
+      0,
+      displayWidth,
+      displayHeight
+    )
+
     let thirdDisplay = displayHeight / 3;
     display.textAlign = "center";
     display.font = "50px Arial";
@@ -440,26 +448,12 @@
       display.fillText(`${game.gameOverMessage[i]}`, displayWidth / 2, thirdDisplay + 100 + (i * 40));
       display.textAlign = "center";
     }
-
-    display.drawImage(
-      player.spritesheet,
-      SPRITE_SIZE * 0,
-      0,
-      SPRITE_SIZE,
-      SPRITE_SIZE,
-      (displayWidth *3/4),
-      (displayHeight *3/4),
-      player.width * 2,
-      player.height * 2
-    )
   }
 
-  function isGameOver() {
-    if (gameOver) {
-      // console.log('GameOver')
-      // document.getElementById("menu").classList.toggle('active');
-      drawMenu();
-    }
+  function gameOver() {
+    // console.log('GameOver')
+    // document.getElementById("menu").classList.toggle('active');
+    drawMenu();
   }
 
   function loadStartScreen() {
@@ -467,22 +461,12 @@
     drawMenu();
   }
 
-  function drawMenu(){
-    const context = document.querySelector("canvas").getContext("2d");
-    context.clearRect(0, 0, displayWidth, displayHeight)
-    display.drawImage(
-      background.menuBackground,
-      0,
-      0,
-      background.menuBackground.width,
-      background.height,
-      0,
-      0,
-      displayWidth,
-      displayHeight
-    )
-    
-    gameOver ? drawGameOver() : drawInstructions();
+  function drawMenu(){    
+    checkGameOver() ? drawGameOver() : drawInstructions();
+  }
+
+  function playerBelowScreen() {
+    return player.y > displayHeight;
   }
   
   function render() {
@@ -493,6 +477,10 @@
     drawPlayer();
     drawBirbs();
   }
+
+  function checkGameOver() {
+    return playerBelowScreen() || checkBirbCollision();
+  }
   
   function mainLoop() {
     if (!isPaused) {
@@ -502,7 +490,11 @@
       updateScore();
       updatePlayerAnimation();
       render();
-      window.requestAnimationFrame(mainLoop); 
+      if (checkGameOver()) {
+        gameOver();
+      } else {
+        window.requestAnimationFrame(mainLoop); 
+      }
     }
   }
 
