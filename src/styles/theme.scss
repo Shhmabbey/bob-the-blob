@@ -150,3 +150,15 @@ article {
   padding: 0.2rem 0.5rem;
   border-radius: 0.2rem;
 }
+
+.click {
+  cursor: pointer;
+  padding-left: 1em;
+  padding-right: 1em;
+}
+
+.click:hover {
+  filter: brightness(50%);
+  width: 55%;
+  height: 55%;
+}

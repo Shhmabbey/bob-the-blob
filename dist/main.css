@@ -285,6 +285,18 @@ article {
   border-radius: 0.2rem;
 }
 
+.click {
+  cursor: pointer;
+  padding-left: 1em;
+  padding-right: 1em;
+}
+
+.click:hover {
+  filter: brightness(50%);
+  width: 55%;
+  height: 55%;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;

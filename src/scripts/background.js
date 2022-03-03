@@ -8,6 +8,10 @@ class Background {
 
     this.backgroundSheet = new Image();
     this.backgroundSheet.src = "assets/background.png";
+
+    this.menuBackground = new Image();
+    this.menuBackground.src = "assets/blurred_menu.png";
+
   }
 
 }

@@ -1,6 +1,5 @@
 class Birb {
   constructor(displayWidth, y, BIRB_SIZE, GRAVITY) {
-    // this.x = Math.floor(Math.random() * 3) * (displayWidth / 6); //dif speed or loactions
     this.x = Math.floor(Math.random() * 2) * (displayWidth);
     this.y = y;
     this.indexX = 0;
@@ -27,6 +26,7 @@ class Birb {
   flying() {
     if (this.direction() === 'right') this.x -= this.xVelocity;
     if (this.direction() === 'left') this.x += this.xVelocity;
+    this.indexX  = ((this.indexX + 1) % 6);
   }
 
   falling() {
