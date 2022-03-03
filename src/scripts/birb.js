@@ -6,7 +6,7 @@ class Birb {
     this.indexY = Math.floor(Math.random() * 2);
     this.directions = ['left', 'right']
 
-    this.xVelocity = (Math.floor(Math.random() * 2) + 1.5);
+    this.xVelocity = ((Math.floor(Math.random() * 3)+1) + (Math.random() * 2));
     this.yVelocity = GRAVITY;
     this.isAwake = true;
 
@@ -17,6 +17,9 @@ class Birb {
     this.birbSheet.src = "assets/blue_birbs.png";
     this.birbSize = BIRB_SIZE;
     this.flyZoneMax = displayWidth;
+    this.animationFrame = 0
+
+    this.easySize = BIRB_SIZE * 0.2;
   }
 
   direction() {
@@ -26,7 +29,8 @@ class Birb {
   flying() {
     if (this.direction() === 'right') this.x -= this.xVelocity;
     if (this.direction() === 'left') this.x += this.xVelocity;
-    this.indexX  = ((this.indexX + 1) % 6);
+    this.animationFrame += 1;
+    if (this.animationFrame % 10 === 0) this.indexX  = ((this.indexX + 1) % 6);
   }
 
   falling() {
@@ -53,19 +57,19 @@ class Birb {
   }
 
   left() {
-    return this.x;
+    return this.x + this.easySize;
   }
 
   right() {
-    return this.x + this.width;
+    return (this.x + this.width) - this.easySize;
   }
 
   top() {
-    return this.y;
+    return this.y + this.easySize;
   }
 
   bottom() {
-    return this.y + this.height;
+    return (this.y + this.height) - this.easySize;
   }
 
 
