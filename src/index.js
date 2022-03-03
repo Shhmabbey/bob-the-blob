@@ -37,6 +37,7 @@
   let platforms = [];
   let netPosition = 0;
   let score = 0;
+  let highScore = 0;
 
   controller = {
     left: { active: false, state: false },     // physical state of key, key being pressed. true = down false = up
@@ -77,7 +78,6 @@
   function generateInitialBirbs() {
     maxBirbs = 4; // BUG: doesn't denerate max birbs only 2
     for (let i = 0; i < maxBirbs; i++){
-      console.log(i)
       let birbY = (50  + (i * (displayHeight / maxBirbs)));
       birbs.push(new Birb(displayWidth, birbY, BIRB_SIZE, GRAVITY));
       i += .5;
@@ -147,14 +147,14 @@
       //     player.x += platformWidth;
       //   }
       // } else 
-      if (birbCollision && player.jumping && !birbAbovePlayer(birb)) {
-        // hitScore += 1;
-        // jump(); // TODO: make bounce larger
-        player.yVelocity = 0;
-        player.yVelocity -= JUMP_INIT_VELOCITY;
-        birb.falling();
-        birbCollision = false;
-      }
+      // if (birbCollision && player.jumping && !birbAbovePlayer(birb)) {
+      //   // hitScore += 1;
+      //   // jump(); // TODO: make bounce larger
+      //   player.yVelocity = 0;
+      //   player.yVelocity -= JUMP_INIT_VELOCITY;
+      //   birb.falling();
+      //   birbCollision = false;
+      // }
     })
     return birbCollision;
   }
@@ -332,10 +332,16 @@
   }
   
   function drawScore() {
+    display.drawImage(
+      background.score,
+      16,
+      16
+    )
+
     display.font = "24px Arial";
     display.fillStyle = "white";
     display.fillText(`Score: ${Math.floor(score * 10) / 10}`, 25, 50);
-    // display.fillText(`Birbs Hit: ${hitScore}`, 25, 80);
+    display.fillText(`Best: ${Math.floor(score * 10) / 10}`, 25, 80);
   }
 
   function drawPlatforms() {
@@ -382,15 +388,28 @@
     }
   }
 
+  function toggleMenuOnSpace() {
+    if (controller.space.active && !checkGameOver()){
+      controller.space.active = false;
+      isPaused ? isPaused = false : isPaused = true;
+      toggleMenu();
+    }
+    window.requestAnimationFrame(toggleMenuOnSpace);
+  }
+
   function toggleMenu(){
     const menuButton = document.getElementById("menu");
     menuButton.classList.toggle('active')
     if (menuButton.classList.contains("active")) {
       isPaused = true;
+    } else {
+      isPaused = false;
+    }
+
+    if (isPaused) {
       menuButton.src = "./assets/darkmodeButtons/forward.png";
       drawInstructions();
     } else {
-      isPaused = false;
       const context = document.querySelector("canvas").getContext("2d");
       context.clearRect(0, 0, displayWidth, displayHeight)
       menuButton.src = "./assets/darkmodeButtons/pause.png"
@@ -442,52 +461,56 @@
   }
 
   function drawGameOver(){
-    let thirdDisplay = displayHeight / 3;
+    let thirdDisplay = displayHeight / 4;
+
     display.textAlign = "center";
-    display.font = "50px Arial";
+    display.drawImage(background.gameover, displayWidth *(5/32 ) , displayHeight/6);
+
+    display.textAlign = "center";
+    display.font = "24px Arial";
     display.fillStyle = "white";
     display.fillText(`Game Over`, displayWidth / 2, thirdDisplay);
     display.textAlign = "center";
 
-    display.font = "24px Arial";
-    display.fillText(`Score: ${Math.floor(score * 10) / 10}`, displayWidth / 2, thirdDisplay + 50);
-    display.textAlign = "center";
-
-    display.font = "16px Arial";
-    for (let i = 0; i < game.gameOverMessage.length; i ++) {
-      display.fillText(`${game.gameOverMessage[i]}`, displayWidth / 2, thirdDisplay + 100 + (i * 40));
+    if ( score === highScore) {
+      display.font = "16px Arial";
+      display.fillText(`New High Score: ${Math.floor(highScore * 10) / 10}`, displayWidth / 2, thirdDisplay + 50);
+      display.textAlign = "center";
+    } else {
+      display.font = "16px Arial";
+      display.textAlign = "center";
+      display.fillText(`Score: ${Math.floor(score * 10) / 10}`, displayWidth / 2, thirdDisplay + 50);
+      display.fillText(`High Score: ${Math.floor(highScore * 10) / 10}`, displayWidth / 2, thirdDisplay + 75);
+      display.fillText(`You can do better than that!`, displayWidth / 2, thirdDisplay + 100);
       display.textAlign = "center";
     }
+
+
+
+    display.font = "16px Arial";
+      display.fillText(`${game.gameOverMessage[0]}`, displayWidth / 2, thirdDisplay + 25);
+
   }
 
   function gameOver() {
+    getHighScore();
     drawGameOver();
     window.requestAnimationFrame(gameOverLoop);
   }
 
   function loadStartScreen() {
+    // TODO add character color options
     document.getElementById("menu").classList.toggle('active');
     drawInstructions();
+    toggleMenuOnSpace();
   }
 
-  // function pauseMenuLoop() {
-  //   // if (controller.space.active) {
-  //   //   toggleMenu()
-  //   // } else {
-  //   //   window.requestAnimationFrame(pauseMenuLoop);
-  //   // }
-  // }
-
-  // function checkSpaceActive(){
-  //   if (controller.space.active) {
-  //     // document.getElementById("menu").classList.toggle('active');
-  //     isPaused = true;
-  //     toggleMenu();
-  //   }
-  // }
+function getHighScore() {
+  if (score > highScore) highScore = score;
+  return highScore
+}
 
   function restartGame(){
-    console.log('restart');
     player = new Player(SPRITE_SIZE, SPRITE_SIZE);
     background = new Background();
     game = new Game();
@@ -511,6 +534,7 @@
   function gameOverLoop(){
     if (controller.space.active) {
       restartGame();
+      isPaused = false;
     } else {
       window.requestAnimationFrame(gameOverLoop);
     }
@@ -539,12 +563,13 @@
       updatePlayerPosition();
       checkBirbCollision();
       updateScore();
-      // checkSpaceActive();
+      toggleMenuOnSpace();
       updatePlayerAnimation();
       render();
       if (checkGameOver()) {
         gameOver();
       } else {
+        toggleMenuOnSpace();
         window.requestAnimationFrame(mainLoop); 
       }
     }
@@ -552,8 +577,7 @@
 
   background.backgroundSheet.addEventListener('load', () => {
     resize();
-    loadStartScreen();
-    // drawInstructions();
+    loadStartScreen(); 
     generateInitialPlatforms();
     generateInitialBirbs();
     setPlayerInitialPosition();
