@@ -1,4 +1,4 @@
-# [bob-the-blob](https://shhmabbey.github.io/jitterbug/) 
+# [bob-the-blob](https://shhmabbey.github.io/bob-the-blob/) 
 
 
 ## Overview
