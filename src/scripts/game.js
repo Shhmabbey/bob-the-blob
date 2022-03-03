@@ -2,7 +2,7 @@ class Game {
   constructor(){
     this.instructions = ['Tap the up arrow key to jump.',
       'Tap the left or right arrow key to move side to side.',
-      'Toggle the down and up arrow key for a boosted jump.',
+      'Toggle the down and up arrow keys for a boosted jump.',
       'Don\'t get hit by the birbs!',
       'See how high you can climb.',
       'Click the play button to start or resume the game.']

@@ -7,9 +7,9 @@ class Platform {
     this.height = platformHeight;
 
     this.largePlatformSheet = new Image()
-    this.largePlatformSheet.src = "assets/large_plateforms.png";
-    this.largeWidth = 196.25;
-    this.largeHeight = 118;
+    this.largePlatformSheet.src = "assets/large_platforms.png";
+    this.largeWidth = 145;
+    this.largeHeight = 87;
     this.largePlatformIndex = Math.random() * (3)
   }
 
