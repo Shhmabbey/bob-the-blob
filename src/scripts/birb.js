@@ -30,7 +30,7 @@ class Birb {
     if (this.direction() === 'right') this.x -= this.xVelocity;
     if (this.direction() === 'left') this.x += this.xVelocity;
     this.animationFrame += 1;
-    if (this.animationFrame % 10 === 0) this.indexX  = ((this.indexX + 1) % 6);
+    if (this.animationFrame % 12 === 0) this.indexX  = ((this.indexX + 1) % 6);
   }
 
   falling() {

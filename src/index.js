@@ -77,9 +77,10 @@
   function generateInitialBirbs() {
     maxBirbs = 4; // BUG: doesn't denerate max birbs only 2
     for (let i = 0; i < maxBirbs; i++){
+      console.log(i)
       let birbY = (50  + (i * (displayHeight / maxBirbs)));
       birbs.push(new Birb(displayWidth, birbY, BIRB_SIZE, GRAVITY));
-      i++;
+      i += .5;
     }
   }
 
