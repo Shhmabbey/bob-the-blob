@@ -77,9 +77,10 @@
   function generateInitialBirbs() {
     maxBirbs = 4; // BUG: doesn't denerate max birbs only 2
     for (let i = 0; i < maxBirbs; i++){
+      console.log(i)
       let birbY = (50  + (i * (displayHeight / maxBirbs)));
       birbs.push(new Birb(displayWidth, birbY, BIRB_SIZE, GRAVITY));
-      i++;
+      i += .5;
     }
   }
 
@@ -122,7 +123,7 @@
   }
 
   function birbAbovePlayer(birb) {
-    return (birb.bottom() <= player.bottom())
+    return (birb.bottom() + birb.easySize <= player.bottom())
   }
 
   function checkBirbCollision() {
@@ -145,11 +146,15 @@
       //   } else {
       //     player.x += platformWidth;
       //   }
-      // } else if (birbCollision && player.jumping && !birbAbovePlayer(birb)) {
-      //   hitScore += 1;
-      //   jump(); // TODO: make bounce larger
-      //   birb.falling();
-      // }
+      // } else 
+      if (birbCollision && player.jumping && !birbAbovePlayer(birb)) {
+        // hitScore += 1;
+        // jump(); // TODO: make bounce larger
+        player.yVelocity = 0;
+        player.yVelocity -= JUMP_INIT_VELOCITY;
+        birb.falling();
+        birbCollision = false;
+      }
     })
     return birbCollision;
   }
@@ -518,10 +523,10 @@
   function render() {
     resize();
     drawBackground();
-    drawScore();
     drawPlatforms();
     drawPlayer();
     drawBirbs();
+    drawScore();
   }
 
   function checkGameOver() {
