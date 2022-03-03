@@ -12,11 +12,6 @@ class Background {
     this.menuBackground = new Image();
     this.menuBackground.src = "assets/blurred_menu.png";
 
-
-    this.score = new Image();
-    this.score.src = "assets/score_backgrounds.png";
-
-
     this.gameover = new Image();
     this.gameover.src = "assets/game_over_final.png";
   }
