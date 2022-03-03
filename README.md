@@ -10,8 +10,7 @@ Tap the up arrow key to jump. Tap the left or right arrow key to move side to si
 <br></br>
 
 ## Concept Art
-![image](https://user-images.githubusercontent.com/50922953/155634303-309aaf5e-7b7f-4c94-ac80-8afb9f21f17c.png)
-
+![screenshot](https://user-images.githubusercontent.com/50922953/156519725-03110c15-5090-40af-85bd-abb575ab3b85.png)
 
 <br></br>
 
