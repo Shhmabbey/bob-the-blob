@@ -1,12 +1,12 @@
-# [Jitterbug](https://shhmabbey.github.io/jitterbug/) 🐛🐛☕🌳
+# [bob-the-blob](https://shhmabbey.github.io/jitterbug/) 
 
 
 ## Overview
-You are a cute little bug with a passion for coffee! Jump from tree branch to tree branch. Collect cups of coffee as you travel higher up the tree. Be wary of predators and careful not to fall!
+Jump from tree platform to platform. See how you can go, be careful not to fall!
 <br></br>
 
 ## Directions
-Use the *space* key to jump and the *left* and *right* arrow keys to move in either direction. Increase your score by collecting coffee cups and traveling higher. Watch out for birds! Bounce on top of birds to knock them down and gain additional points.
+Tap the up arrow key to jump. Tap the left or right arrow key to move side to side. Toggle the down and up arrow key for a boosted jump. Don't get hit by the birbs! See how high you can climb.
 <br></br>
 
 ## Concept Art
@@ -17,11 +17,11 @@ Use the *space* key to jump and the *left* and *right* arrow keys to move in eit
 
 ## Functionality & MVPs
 <details>
-<summary><b>In Jitterbug, users will be able to:</b></summary>
+<summary><b>In Bob the Blob, users will be able to:</b></summary>
 
-* Collect numerous servings of a tasty beverage
-* Explore the world from a bug's perspective
-* Dodge and defeat pretators
+* Jump, squish and crawl
+* Explore the world from a blob's perspective
+* Dodge pretators
 * Take a break from responsibilities and have a little fun
 
 </details>
@@ -62,7 +62,9 @@ Use the *space* key to jump and the *left* and *right* arrow keys to move in eit
 
 ## Big Things Are Coming
 Future Features
-* Moving predators
+* Moving platforms
+* Shooting bullets
+* Bounce on birbs
 * Other special items
 * Score board
 * Style your bug
