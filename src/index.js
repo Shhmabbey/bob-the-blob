@@ -499,10 +499,10 @@
     toggleMenuOnSpace();
   }
 
-function getHighScore() {
-  if (score > highScore) highScore = score;
-  return highScore
-}
+  function getHighScore() {
+    if (score > highScore) highScore = score;
+    return highScore
+  }
 
   function restartGame(){
     player = new Player(SPRITE_SIZE, SPRITE_SIZE);
@@ -514,6 +514,7 @@ function getHighScore() {
     netPosition = 0;
     score = 0;
 
+
     resize();
     generateInitialPlatforms();
     generateInitialBirbs();
@@ -522,7 +523,9 @@ function getHighScore() {
     toggleMenuOnClick();
     render();
 
-    mainLoop();
+    // mainLoop();
+    window.location.reload(true);
+
   }
 
   function gameOverLoop(){
@@ -551,6 +554,10 @@ function getHighScore() {
     return playerBelowScreen() || checkBirbCollision();
   }
   
+  // function mainLoop() {
+  //   setTimeout(runOnce(), 1)
+  // }
+
   function mainLoop() {
     if (!isPaused) {
       updatePlayerVelocity();

@@ -287,19 +287,14 @@ article {
 
 .click {
   cursor: pointer;
-  padding-left: .5em;
+  padding-left: 1em;
+  padding-right: 1em;
 }
 
 .click:hover {
-  filter: brightness(85%);
-  width: 58.5%;
-  height: 58.5%;
-  padding-left: 0em;
-}
-
-.live-link {
-  cursor: pointer;
-  padding-left: .5em;
+  filter: brightness(50%);
+  width: 55%;
+  height: 55%;
 }
 
 * {
