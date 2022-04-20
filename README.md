@@ -1,37 +1,39 @@
-# [bob-the-blob](https://shhmabbey.github.io/bob-the-blob/) 
-
+# Bob the Blob
+To view a live version, [click here](https://shhmabbey.github.io/bob-the-blob/) 
 
 ## Overview
-Jump from tree platform to platform. See how you can go, be careful not to fall!
+Bob the Blob is a platforming game, in which the you can jump from platform to platform increase your score. See how far you can go, be careful not to fall!
 <br></br>
 
 ## Directions
 Tap the up arrow key to jump. Tap the left or right arrow key to move side to side. Toggle the down and up arrow key for a boosted jump. Don't get hit by the birbs! See how high you can climb.
 <br></br>
 
-## Concept Art
-![screenshot](https://user-images.githubusercontent.com/50922953/156519725-03110c15-5090-40af-85bd-abb575ab3b85.png)
+## Demo
+
+https://user-images.githubusercontent.com/50922953/164318965-569dbd22-a531-4006-8810-b5d49a2b859c.mp4
+
 
 <br></br>
 
 ## Functionality & MVPs
-<details>
-<summary><b>In Bob the Blob, users will be able to:</b></summary>
-
+<b>In Bob the Blob, users will be able to:</b>
+Start, restart, and exit the game
 * Jump, squish and crawl
 * Explore the world from a blob's perspective
-* Dodge pretators
+* Dodge and defeat pretators
 * Take a break from responsibilities and have a little fun
 
-</details>
+In addition, this project will include:
+- Pause the game using the space bar to take a break or review the instructions
+- View instructions from the menu
+- Allow you to mute the audio
+- Allow you to chose light or dark mode
 
 <br></br>
 
-## Technologies Used
-<details>
-<summary><b>Technologies, Libraries, APIs</b></summary>
-
-* Canvas API (intended)
+## Technologies, Libraries, APIs
+* Canvas API 
 
 </details>
 
@@ -63,9 +65,7 @@ Tap the up arrow key to jump. Tap the left or right arrow key to move side to si
 Future Features
 * Moving platforms
 * Shooting bullets
-* Bounce on birbs
 * Other special items
-* Score board
 * Style your bug
 
 
