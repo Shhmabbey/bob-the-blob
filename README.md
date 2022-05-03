@@ -1,15 +1,22 @@
 # Bob the Blob
+Bob the Blob is a platforming game, in which the you can jump from platform to platform increase your score. See how far you can go. Be careful not to fall!
 To view a live version, [click here](https://shhmabbey.github.io/bob-the-blob/) 
 
-## Overview & Demo
-Bob the Blob is a platforming game, in which the you can jump from platform to platform increase your score. See how far you can go. Be careful not to fall!
+## Table of Contents
 
+1. [Demo](#demo)
+2. [Directions](#directions)
+3. [Features](#features)
+4. [Technologies](#technologies)
+5. [Future Features](#future-features)
+
+## Demo
 https://user-images.githubusercontent.com/50922953/164318965-569dbd22-a531-4006-8810-b5d49a2b859c.mp4
 
 ## Directions
 Tap the up arrow key to jump. Tap the left or right arrow key to move side to side. Toggle the down and up arrow key for a boosted jump. Don't get hit by the birbs! See how high you can climb.
 
-## Functionality & MVPs
+## Features
 <b>In Bob the Blob, users will be able to:</b>
 Start, restart, and exit the game
 * Jump, squish and crawl
@@ -23,35 +30,14 @@ In addition, this project will include:
 * Allow you to mute the audio
 * Allow you to chose light or dark mode
 
-## Technologies, Libraries, APIs
+## Technologies
 * Javascript for the game logic
 * `Canvas API` for implementing player movement, monster movement, and rendering animation
 * `Webpack` to bundle the source JavaScript code
 * `npm` to manage project dependencies
 * HTML and CSS for design
 
-## Implementation Timeline
-
-* Friday Afternoon & Weekend
-  * Research Technologies
-  * Set up project
-  * Select images, sprites, layout
-  * Render background
-* Monday
-  * Add physics and motion
-  * Add Generate branches on tree
-  * Add bug key controls
-* Tuesday
-  * Iron out game play
-* Wednesday
-  * Title and Instructions page
-  * Add buttons, icons and links
-  * Add music
-* Thursday Morning
-  * Final touch ups
-
-## Big Things Are Coming
-Future Features
+## Future Features
 * Moving platforms
 * Shooting bullets
 * Other special items
