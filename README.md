@@ -11,7 +11,7 @@ To view a live version, [click here](https://shhmabbey.github.io/bob-the-blob/)
 5. [Future Features](#future-features)
 
 ## Demo
-https://user-images.githubusercontent.com/50922953/164318965-569dbd22-a531-4006-8810-b5d49a2b859c.mp4
+<img src="https://media.giphy.com/media/S4atcs1GmwSC3ITyYI/giphy.gif" />
 
 ## Directions
 Tap the up arrow key to jump. Tap the left or right arrow key to move side to side. Toggle the down and up arrow key for a boosted jump. Don't get hit by the birbs! See how high you can climb.
