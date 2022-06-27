@@ -15,9 +15,11 @@ const JUMP_INIT_VELOCITY = 18.2;
 const SUPER_JUMP_VELOCITY = 30;
 const DAMPEN = 0.9;
 
+// PLAT
 const platformWidth = 145;
 const platformHeight = 15;
 const maxPlatforms = 6;
+// PLAT
 
 let maxBirbs;
 
@@ -33,7 +35,9 @@ var game = new Game();
 
 let isPaused = true;
 let birbs = [];
+// PLAT
 let platforms = [];
+// PLAT
 let netPosition = 0;
 let score = 0;
 let highScore = 0;
@@ -94,6 +98,7 @@ function moveBirbs(distance) {
   })
 }
 
+// PLAT
 function generateInitialPlatforms() {
   for (let i = 0; i < maxPlatforms; i++) {
     let newPlatformHeight = 100 + i * (displayHeight / maxPlatforms);
@@ -104,13 +109,14 @@ function generateInitialPlatforms() {
 function movePlatforms(distance) {
   platforms.forEach((platform) => {
     platform.y -= distance; 
-
+    
     if (platform.y > displayHeight) {
       platforms.pop();
       platforms.unshift(new Platform(0, displayWidth, platformWidth, platformHeight));
     }
   })
 }
+// PLAT
 
 function moveCamera(distance) {
   movePlatforms(distance);
@@ -158,6 +164,7 @@ function checkBirbCollision() {
   return birbCollision;
 }
 
+// PLAT
 function checkPlatformCollision() {
   platforms.forEach(platform => {
     if (
@@ -175,6 +182,7 @@ function checkPlatformCollision() {
   })
   return player.onPlatform !== -1;
 }
+// PLAT
 
 function jump() {
   controller.up.active = false;
@@ -202,7 +210,7 @@ function updatePlayerVelocity() {
   if (controller.left.active) moveLeft();
   if (controller.right.active) moveRight();
 
-  applyGravity();
+  player.applyGravity(GRAVITY);
   player.xVelocity *= DAMPEN;
 }
 
@@ -217,20 +225,6 @@ function updatePlayerAnimation() {
     (controller.down.active) ? player.squish() : player.unsquish();
   }
 }
-
-function applyGravity() {
-  if (player.onPlatform !== -1) {
-    // if player falls off side of platform => apply gravity
-    let platform = player.onPlatform;
-    if (!((player.right() > platform.left()) && (player.left() < platform.right()))) {
-      player.jumping = true;
-      player.onPlatform = -1;
-    }
-  } else {
-    player.yVelocity += GRAVITY;
-  }
-}
-
 
 function handlePlayerDisplayEdgeBehavior() {
   if (!DISPLAY_WRAP) {

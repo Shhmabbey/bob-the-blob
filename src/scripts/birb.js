@@ -1,5 +1,8 @@
+// const BIRB_SIZE = 32;
+
 class Birb {
-  constructor(displayWidth, y, BIRB_SIZE, GRAVITY) {
+  constructor(displayWidth, y, BIRB_SIZE = 32, GRAVITY) {
+    
     this.x = Math.floor(Math.random() * 2) * (displayWidth);
     this.y = y;
     this.indexX = 0;
@@ -22,6 +25,10 @@ class Birb {
 
     this.easySize = BIRB_SIZE * 0.2;
   }
+
+  // static get BIRB_SIZE(){
+  //   return BIRB_SIZE;
+  // }
 
   direction() {
     return this.directions[this.indexY];

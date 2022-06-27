@@ -82,6 +82,18 @@ class Player {
     this.spriteIndex = 2;
   }
 
+  applyGravity(GRAVITY) {
+  if (this.onPlatform !== -1) {
+    // if player falls off side of platform => apply gravity
+    let platform = this.onPlatform;
+    if (!((this.right() > platform.left()) && (this.left() < platform.right()))) {
+      this.jumping = true;
+      this.onPlatform = -1;
+    }
+  } else {
+    this.yVelocity += GRAVITY;
+  }
+}
 }
 
 module.exports = Player;
