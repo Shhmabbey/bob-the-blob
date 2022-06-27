@@ -14,7 +14,8 @@ const theme = {
     '--primary-color': '#0d0b52',
     '--secondary-color': '#3458b9',
     '--font-color': '#424242',
-    '--bg-color': '#E5CCCA',
+    // '--bg-color': '#E5CCCA',
+    '--bg-color': '#ADD8E6',
     '--heading-color': '#292922'
   }
 };
