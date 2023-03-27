@@ -1,7 +1,7 @@
 // const BIRB_SIZE = 32;
 
 class Birb {
-  constructor(displayWidth, y, BIRB_SIZE = 32, GRAVITY) {
+  constructor(displayWidth, y, GRAVITY, BIRB_SIZE = 32) {
     
     this.x = Math.floor(Math.random() * 2) * (displayWidth);
     this.y = y;

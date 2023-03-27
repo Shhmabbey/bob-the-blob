@@ -4,10 +4,6 @@ const Background = require('./scripts/background');
 const Birb = require('./scripts/birb');
 const Game = require('./scripts/game');
 
-const SPRITE_SIZE = 32;
-const BIRB_SIZE = 32;
-
-const DISPLAY_WRAP = false;
 const GRAVITY = 0.78;
 const RUN_SPEED = 0.7;
 const CRAWL_SPEED = 0.2;
@@ -15,11 +11,9 @@ const JUMP_INIT_VELOCITY = 18.2;
 const SUPER_JUMP_VELOCITY = 30;
 const DAMPEN = 0.9;
 
-// PLAT
 const platformWidth = 145;
 const platformHeight = 15;
 const maxPlatforms = 6;
-// PLAT
 
 let maxBirbs;
 
@@ -29,15 +23,13 @@ const display = document.querySelector("canvas").getContext("2d");
 const audioButton = document.getElementById("play-audio");
 const audio = document.getElementById("music");
 
-var player = new Player(SPRITE_SIZE, SPRITE_SIZE);  
+var player = new Player();  
 var background = new Background();
 var game = new Game();
 
 let isPaused = true;
 let birbs = [];
-// PLAT
 let platforms = [];
-// PLAT
 let netPosition = 0;
 let score = 0;
 let highScore = 0;
@@ -79,10 +71,10 @@ controller = {
 }
 
 function generateInitialBirbs() {
-  maxBirbs = 4; // BUG: doesn't denerate max birbs only 2
+  maxBirbs = 4; // BUG: doesn't generate max birbs
   for (let i = 0; i < maxBirbs; i++){
     let birbY = (50  + (i * (displayHeight / maxBirbs)));
-    birbs.push(new Birb(displayWidth, birbY, BIRB_SIZE, GRAVITY));
+    birbs.push(new Birb(displayWidth, birbY, GRAVITY));
     i += .5;
   }
 }
@@ -93,7 +85,7 @@ function moveBirbs(distance) {
 
     if (birb.y > displayHeight) {
       birbs.pop();
-      birbs.unshift(new Birb(displayWidth, 0, BIRB_SIZE, GRAVITY));
+      birbs.unshift(new Birb(displayWidth, 0, GRAVITY));
     }
   })
 }
@@ -102,7 +94,7 @@ function moveBirbs(distance) {
 function generateInitialPlatforms() {
   for (let i = 0; i < maxPlatforms; i++) {
     let newPlatformHeight = 100 + i * (displayHeight / maxPlatforms);
-    platforms.push(new Platform(newPlatformHeight, displayWidth, platformWidth, platformHeight));
+    platforms.push(new Platform(newPlatformHeight, displayWidth));
   }
 }
 
@@ -112,7 +104,7 @@ function movePlatforms(distance) {
     
     if (platform.y > displayHeight) {
       platforms.pop();
-      platforms.unshift(new Platform(0, displayWidth, platformWidth, platformHeight));
+      platforms.unshift(new Platform(0, displayWidth));
     }
   })
 }
@@ -227,7 +219,7 @@ function updatePlayerAnimation() {
 }
 
 function handlePlayerDisplayEdgeBehavior() {
-  if (!DISPLAY_WRAP) {
+  if (!game.DISPLAY_WRAP) {
     player.x = Math.min(Math.max(player.x, 0), displayWidth - player.width);
   }
   else {
@@ -296,10 +288,10 @@ function resize() {
 function drawPlayer() {
   display.drawImage(
     player.spritesheet,
-    SPRITE_SIZE * player.spriteIndex,
+    player.spriteSize * player.spriteIndex,
     0,
-    SPRITE_SIZE,
-    SPRITE_SIZE,
+    player.spriteSize,
+    player.spriteSize,
     player.x,
     player.y,
     player.width,
@@ -343,10 +335,10 @@ function drawBirbs() {
     birb.move();
     display.drawImage(
       birb.birbSheet,
-      BIRB_SIZE * birb.indexX,
-      BIRB_SIZE * birb.indexY,
-      BIRB_SIZE,
-      BIRB_SIZE,
+      birb.birbSize * birb.indexX,
+      birb.birbSize * birb.indexY,
+      birb.birbSize,
+      birb.birbSize,
       birb.x,
       birb.y,
       birb.width,
@@ -434,10 +426,10 @@ function drawInstructions(){
 
   display.drawImage(
     player.spritesheet,
-    SPRITE_SIZE * 0,
+    player.spriteSize * 0,
     0,
-    SPRITE_SIZE,
-    SPRITE_SIZE,
+    player.spriteSize,
+    player.spriteSize,
     (displayWidth *3/4),
     (displayHeight *3/4),
     player.width * 2,
@@ -496,7 +488,7 @@ function getHighScore() {
 }
 
 function restartGame(){
-  player = new Player(SPRITE_SIZE, SPRITE_SIZE);
+  player = new Player();
   background = new Background();
   game = new Game();
   isPaused = false;

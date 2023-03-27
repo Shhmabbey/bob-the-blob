@@ -1,5 +1,6 @@
 class Game {
   constructor(){
+    this.DISPLAY_WRAP = false;
     this.instructions = ['Tap the up arrow key to jump.',
       'Tap the left or right arrow key to move side to side.',
       'Toggle the down and up arrow keys for a boosted jump.',

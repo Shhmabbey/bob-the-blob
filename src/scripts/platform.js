@@ -1,5 +1,5 @@
 class Platform {
-  constructor(newplatformHeight, displayWidth, platformWidth, platformHeight) {
+  constructor(newplatformHeight, displayWidth, platformWidth = 145, platformHeight = 15) {
     this.x = Math.random() * (displayWidth - platformWidth);
     this.y = newplatformHeight;
 

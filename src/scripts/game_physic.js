@@ -1,5 +1,6 @@
 class GamePhysic {
   constructor() {
+
   }
 }
 

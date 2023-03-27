@@ -31,10 +31,10 @@
     "mini-css-extract-plugin": "^2.5.3",
     "regenerator-runtime": "^0.13.9",
     "sass": "^1.49.9",
-    "sass-loader": "^12.6.0",
-    "webpack": "^5.69.1"
+    "sass-loader": "^12.6.0"
   },
   "devDependencies": {
-    "webpack-cli": "^4.9.2"
+    "webpack": "^5.76.3",
+    "webpack-cli": "^4.10.0"
   }
 }

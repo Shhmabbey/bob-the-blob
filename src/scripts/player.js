@@ -1,10 +1,10 @@
 class Player {
-  constructor(playerHeight, playerWidth, SPRITE_SIZE) {
+  constructor(SPRITE_SIZE = 32) {
     this.jumping = true;
     this.squished = false;
     this.struck = false;
-    this.height = playerHeight;
-    this.width = playerWidth;
+    this.height = SPRITE_SIZE;
+    this.width = SPRITE_SIZE;
 
     this.onPlatform = -1;
     this.x = 0;
