@@ -28,6 +28,12 @@ class Platform {
   bottom() {
     return this.y + this.height;
   }
+
+  // todo: what to move to game
+  draw(display) {
+    display.fillStyle = "#7ec0ff";
+    display.fillRect(this.x, this.y, this.width, this.height);
+  }
 }
 
 module.exports = Platform;

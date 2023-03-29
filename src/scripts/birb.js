@@ -80,7 +80,22 @@ class Birb {
     return (this.y + this.height) - this.easySize;
   }
 
+  draw() {
+      birb.move(); // todo:
+      display.drawImage(
+        this.birbSheet,
+        this.birbSize * this.indexX,
+        this.birbSize * this.indexY,
+        this.birbSize,
+        this.birbSize,
+        this.x,
+        this.y,
+        this.width,
+        this.height
+      )
+    }
 
+  // todo: levels
   // static oddsOfBirbGeneration(currentScore) {
   //   // if (currentScore < 50 ) return 2;
   //   // if (currentScore < 150) return 3;

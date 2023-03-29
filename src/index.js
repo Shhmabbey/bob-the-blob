@@ -4,18 +4,17 @@ const Background = require('./scripts/background');
 const Birb = require('./scripts/birb');
 const Game = require('./scripts/game');
 
+// move to game
 const GRAVITY = 0.78;
 const RUN_SPEED = 0.7;
 const CRAWL_SPEED = 0.2;
 const JUMP_INIT_VELOCITY = 18.2;
 const SUPER_JUMP_VELOCITY = 30;
 const DAMPEN = 0.9;
+//
 
 const platformWidth = 145;
 const platformHeight = 15;
-const maxPlatforms = 6;
-
-let maxBirbs;
 
 var displayWidth, displayHeight, controller, playerMaxCameraHeight;
 
@@ -26,85 +25,32 @@ const audio = document.getElementById("music");
 var player = new Player();  
 var background = new Background();
 var game = new Game();
+// new GameView(game, ctx).start();
 
-let isPaused = true;
-let birbs = [];
-let platforms = [];
 let netPosition = 0;
 let score = 0;
 let highScore = 0;
 
-controller = {
-  left: { active: false, state: false },     // physical state of key, key being pressed. true = down false = up
-  right: { active: false, state: false },    // active is virtual state
-  up: { active: false, state: false },
-  down: { active:false, state: false},
-  space: { active: false, state: false },
-
-  keyUpDown: function (event) {
-    var keyState = (event.type == "keydown") ? true : false;
-    switch (event.keyCode) {
-      case 37: // left key
-        if (controller.left.state != keyState) controller.left.active = keyState;
-        controller.left.state = keyState;
-        break;
-      case 38: // up key
-        if (controller.up.state != keyState) controller.up.active = keyState;
-        controller.up.state = keyState;
-        break;
-      case 39: // right key
-        if (controller.right.state != keyState) controller.right.active = keyState;
-        controller.right.state = keyState;
-        break;
-      case 40: // down key is a toggle
-        if (controller.down.state != keyState) {
-          if (keyState) controller.down.active = !controller.down.active;
-        }
-        controller.down.state = keyState;
-        break;
-      case 32: // space bar 
-        if (controller.space.state != keyState) controller.space.active = keyState;
-        controller.space.state = keyState;
-        break;
-    }
-  }
-}
-
-function generateInitialBirbs() {
-  maxBirbs = 4; // BUG: doesn't generate max birbs
-  for (let i = 0; i < maxBirbs; i++){
-    let birbY = (50  + (i * (displayHeight / maxBirbs)));
-    birbs.push(new Birb(displayWidth, birbY, GRAVITY));
-    i += .5;
-  }
-}
-
 function moveBirbs(distance) {
-  birbs.forEach((birb) => {
+  game.birbs.forEach((birb) => {
     birb.y -= distance;
 
     if (birb.y > displayHeight) {
-      birbs.pop();
-      birbs.unshift(new Birb(displayWidth, 0, GRAVITY));
+      game.birbs.pop();
+      game.birbs.unshift(new Birb(displayWidth, 0, GRAVITY));
     }
   })
 }
 
 // PLAT
-function generateInitialPlatforms() {
-  for (let i = 0; i < maxPlatforms; i++) {
-    let newPlatformHeight = 100 + i * (displayHeight / maxPlatforms);
-    platforms.push(new Platform(newPlatformHeight, displayWidth));
-  }
-}
 
 function movePlatforms(distance) {
-  platforms.forEach((platform) => {
+  game.platforms.forEach((platform) => {
     platform.y -= distance; 
     
     if (platform.y > displayHeight) {
-      platforms.pop();
-      platforms.unshift(new Platform(0, displayWidth));
+      game.platforms.pop();
+      game.platforms.unshift(new Platform(0, displayWidth));
     }
   })
 }
@@ -125,7 +71,7 @@ function birbAbovePlayer(birb) {
 
 function checkBirbCollision() {
   let birbCollision = false
-  birbs.forEach((birb) => {
+  game.birbs.forEach((birb) => {
     birbCollision ||= (
       (player.top() < birb.bottom()) &&
       (player.bottom() > birb.top()) &&
@@ -158,7 +104,7 @@ function checkBirbCollision() {
 
 // PLAT
 function checkPlatformCollision() {
-  platforms.forEach(platform => {
+  game.platforms.forEach(platform => {
     if (
       player.isFalling() &&
       (player.bottom() < platform.bottom()) &&
@@ -219,7 +165,7 @@ function updatePlayerAnimation() {
 }
 
 function handlePlayerDisplayEdgeBehavior() {
-  if (!game.DISPLAY_WRAP) {
+  if (!Game.DISPLAY_WRAP) {
     player.x = Math.min(Math.max(player.x, 0), displayWidth - player.width);
   }
   else {
@@ -269,8 +215,8 @@ function updateScore() {
 }
 
 function setPlayerInitialPosition() {
-  player.x = platforms[maxPlatforms - 1].x + ((platformWidth - player.width) / 2);
-  player.y = platforms[maxPlatforms - 1].top() -100;
+  player.x = game.platforms[game.maxPlatforms - 1].x + ((platformWidth - player.width) / 2);
+  player.y = game.platforms[game.maxPlatforms - 1].top() -100;
 }
 
 function resize() {
@@ -284,20 +230,6 @@ function resize() {
 
   display.imageSmoothingEnabled = false;
 };
-
-function drawPlayer() {
-  display.drawImage(
-    player.spritesheet,
-    player.spriteSize * player.spriteIndex,
-    0,
-    player.spriteSize,
-    player.spriteSize,
-    player.x,
-    player.y,
-    player.width,
-    player.height
-  );
-}
 
 function drawBackground() {
   if (background.y < 0) { // TO DO: broken loop
@@ -323,30 +255,6 @@ function drawScore() {
   // display.fillText(`Best: ${Math.floor(highScore * 10) / 10}`, 25, 80);
 }
 
-function drawPlatforms() {
-  display.fillStyle = "#7ec0ff";
-  platforms.forEach((platform) => {
-    display.fillRect(platform.x, platform.y, platform.width, platform.height);
-  });
-}
-
-function drawBirbs() {
-  birbs.forEach((birb) => {
-    birb.move();
-    display.drawImage(
-      birb.birbSheet,
-      birb.birbSize * birb.indexX,
-      birb.birbSize * birb.indexY,
-      birb.birbSize,
-      birb.birbSize,
-      birb.x,
-      birb.y,
-      birb.width,
-      birb.height
-    )
-  })
-}
-
 function toggleMusic(){
   audioButton.onclick = function () {
     audioButton.classList.toggle('active')
@@ -370,7 +278,7 @@ function toggleMenuOnClick(){
 function toggleMenuOnSpace() {
   if (controller.space.active && !checkGameOver()){
     controller.space.active = false;
-    isPaused ? isPaused = false : isPaused = true;
+    game.isPaused ? game.isPaused = false : game.isPaused = true;
     toggleMenu();
   }
   window.requestAnimationFrame(toggleMenuOnSpace);
@@ -380,12 +288,12 @@ function toggleMenu(){
   const menuButton = document.getElementById("menu");
   menuButton.classList.toggle('active')
   if (menuButton.classList.contains("active")) {
-    isPaused = true;
+    game.isPaused = true;
   } else {
-    isPaused = false;
+    game.isPaused = false;
   }
 
-  if (isPaused) {
+  if (game.isPaused) {
     menuButton.src = "./assets/darkmodeButtons/forward.png";
     drawInstructions();
   } else {
@@ -491,9 +399,7 @@ function restartGame(){
   player = new Player();
   background = new Background();
   game = new Game();
-  isPaused = false;
-  birbs = [];
-  platforms = [];
+  game.isPaused = false;
   netPosition = 0;
   score = 0;
 
@@ -512,7 +418,7 @@ function restartGame(){
 function gameOverLoop(){
   if (controller.space.active) {
     restartGame();
-    isPaused = false;
+    game.isPaused = false;
   } else {
     window.requestAnimationFrame(gameOverLoop);
   }
@@ -536,7 +442,7 @@ function checkGameOver() {
 }
 
 function mainLoop() {
-  if (!isPaused) {
+  if (!game.isPaused) {
     updatePlayerVelocity();
     updatePlayerPosition();
     checkBirbCollision();

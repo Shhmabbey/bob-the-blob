@@ -83,17 +83,33 @@ class Player {
   }
 
   applyGravity(GRAVITY) {
-  if (this.onPlatform !== -1) {
-    // if player falls off side of platform => apply gravity
-    let platform = this.onPlatform;
-    if (!((this.right() > platform.left()) && (this.left() < platform.right()))) {
-      this.jumping = true;
-      this.onPlatform = -1;
+    if (this.onPlatform !== -1) {
+      // if player falls off side of platform => apply gravity
+      let platform = this.onPlatform;
+      if (!((this.right() > platform.left()) && (this.left() < platform.right()))) {
+        this.jumping = true;
+        this.onPlatform = -1;
+      }
+    } else {
+      this.yVelocity += GRAVITY;
     }
-  } else {
-    this.yVelocity += GRAVITY;
   }
-}
+
+  // todo: display
+  draw(display) {
+    display.drawImage(
+      this.spritesheet,
+      this.spriteSize * this.spriteIndex,
+      0,
+      this.spriteSize,
+      this.spriteSize,
+      this.x,
+      this.y,
+      this.width,
+      this.height
+    );
+  }
+
 }
 
 module.exports = Player;
