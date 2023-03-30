@@ -55,6 +55,46 @@ class Game {
     });
   }
 
+  moveBirbs(distance) {
+    this.birbs.forEach((birb) => {
+      birb.y -= distance;
+  
+      if (birb.y > displayHeight) {
+        this.birbs.pop();
+        this.birbs.unshift(new Birb(displayWidth, 0, GRAVITY));
+      }
+    })
+  }
+
+  movePlatforms(distance) {
+    this.platforms.forEach((platform) => {
+      platform.y -= distance; 
+      
+      if (platform.y > displayHeight) {
+        this.platforms.pop();
+        this.platforms.unshift(new Platform(0, displayWidth));
+      }
+    })
+  }
+
+  checkPlayerBirbCollision() {
+    this.birbs.forEach((birb) => {
+      if (player.checkBirbCollision(birb)) return true
+    })
+    return false;
+  }
+
+  checkPlayerPlatformCollision() {
+    this.platforms.forEach(platform => {
+      player.checkPlatformCollision(platform)
+    })
+    return player.onPlatform !== -1;
+  }
+
+  checkGameOver() {
+    return player.belowScreen() || this.checkPlayerBirbCollision();
+  }
+
 }
 
 module.exports = Game;

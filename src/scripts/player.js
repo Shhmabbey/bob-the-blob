@@ -110,6 +110,68 @@ class Player {
     );
   }
 
+  checkBirbCollision() {
+    let birbCollision = false;
+    birbCollision ||= (
+      (this.top() < birb.bottom()) &&
+      (this.bottom() > birb.top()) &&
+      (this.right() > birb.left()) && 
+      (this.left() < birb.right())
+    );
+  
+      // if (birbCollision && birbAbovePlayer(birb)) {
+      //   birb.struck = true;
+      //   player.unsquish();
+      //   controller.down.active = false;
+      //   player.falling();
+      //   if (birb.direction() === 'right') {
+      //     player.x -= platformWidth;
+      //   } else {
+      //     player.x += platformWidth;
+      //   }
+      // } else 
+      if (birbCollision && this.jumping && !this.birbAbovePlayer(birb)) {
+        // hitScore += 1;
+        // jump(); // TODO: make bounce larger
+        this.yVelocity = 0;
+        this.yVelocity -= JUMP_INIT_VELOCITY;
+        birb.falling();
+        birbCollision = false;
+      }
+    return birbCollision;
+  }
+
+  birbAbovePlayer(birb) {
+    return (birb.bottom() + birb.easySize <= this.bottom())
+  }
+
+  checkPlatformCollision(platform) {
+    if (
+      this.isFalling() &&
+      (this.bottom() < platform.bottom()) &&
+      (this.bottom() > platform.top()) &&
+      (this.right() > platform.left()) &&
+      (this.left() < platform.right())
+    ) {
+      this.jumping = false;
+      this.yVelocity = 0;
+      this.y = platform.top() - this.height;
+      this.onPlatform = platform;
+    }
+  }
+
+  moveLeft() {
+    this.squished ? this.xVelocity -= CRAWL_SPEED : this.xVelocity -= RUN_SPEED;
+  }
+  
+  moveRight() {
+    this.squished ? this.xVelocity += CRAWL_SPEED : this.xVelocity += RUN_SPEED;
+  }
+
+  belowScreen() {
+    return this.y > displayHeight;
+  }
+  
 }
 
 module.exports = Player;

@@ -26,10 +26,6 @@ class Birb {
     this.easySize = BIRB_SIZE * 0.2;
   }
 
-  // static get BIRB_SIZE(){
-  //   return BIRB_SIZE;
-  // }
-
   direction() {
     return this.directions[this.indexY];
   } 
@@ -61,7 +57,6 @@ class Birb {
   move() {
     this.handleBirbDisplayEdgeBehavoir();
     this.isAwake ? this.flying() : this.falling();
-    
   }
 
   left() {
@@ -81,19 +76,19 @@ class Birb {
   }
 
   draw() {
-      birb.move(); // todo:
-      display.drawImage(
-        this.birbSheet,
-        this.birbSize * this.indexX,
-        this.birbSize * this.indexY,
-        this.birbSize,
-        this.birbSize,
-        this.x,
-        this.y,
-        this.width,
-        this.height
-      )
-    }
+    birb.move(); // todo:
+    display.drawImage(
+      this.birbSheet,
+      this.birbSize * this.indexX,
+      this.birbSize * this.indexY,
+      this.birbSize,
+      this.birbSize,
+      this.x,
+      this.y,
+      this.width,
+      this.height
+    )
+  }
 
   // todo: levels
   // static oddsOfBirbGeneration(currentScore) {

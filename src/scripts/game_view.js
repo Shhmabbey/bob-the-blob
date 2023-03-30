@@ -40,6 +40,40 @@ class GameView {
       }
     }
   }
+
+  moveCamera(distance) {
+    this.game.movePlatforms(distance);
+    this.game.moveBirbs(distance);
+  }
+  
+  moveBackground(distance) {
+    background.y += distance; 
+  }
+
+  getHighScore() {
+    if (score > highScore) highScore = score;
+    return highScore
+  }
+  
+  restartGame(){
+    player = new Player();
+    background = new Background();
+    game = new Game();
+    game.isPaused = false;
+    netPosition = 0;
+    score = 0;
+  
+  
+    resize();
+    generateInitialPlatforms();
+    generateInitialBirbs();
+    setPlayerInitialPosition();
+    toggleMusic();
+    toggleMenuOnClick();
+    render();
+  
+    window.location.reload(true);
+  }
 }
 
 module.exports = GameView;
