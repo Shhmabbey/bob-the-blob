@@ -54,25 +54,51 @@ class GameView {
     if (score > highScore) highScore = score;
     return highScore
   }
+
+  start() {
+    resize();
+    loadStartScreen(); 
+    this.game.generateInitialPlatforms();
+    this.game.generateInitialBirbs();
+    this.game.setPlayerInitialPosition();
+    toggleMusic();
+    toggleMenuOnClick();
+  }
   
   restartGame(){
     player = new Player();
     background = new Background();
-    game = new Game();
-    game.isPaused = false;
+    this.game = new Game();
+    this.game.isPaused = false;
     netPosition = 0;
     score = 0;
   
-  
-    resize();
-    generateInitialPlatforms();
-    generateInitialBirbs();
-    setPlayerInitialPosition();
-    toggleMusic();
-    toggleMenuOnClick();
+    this.start();
     render();
   
     window.location.reload(true);
+  }
+
+  gameOver() {
+    getHighScore();
+    drawGameOver();
+    window.requestAnimationFrame(gameOverLoop);
+  }
+  
+  loadStartScreen() {
+    // TODO add character color options
+    document.getElementById("menu").classList.toggle('active');
+    drawInstructions();
+    toggleMenuOnSpace();
+  }
+  
+  gameOverLoop(){
+    if (controller.space.active) {
+      restartGame();
+      game.isPaused = false;
+    } else {
+      window.requestAnimationFrame(gameOverLoop);
+    }
   }
 }
 
